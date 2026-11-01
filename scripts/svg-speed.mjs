@@ -59,5 +59,11 @@ for(const fixture of cases){
   assert.equal(Number(stream.duration),4);assert.equal(stream.r_frame_rate,'30/1');
   assert.equal(stream.width,fixture.width);assert.equal(stream.height,fixture.height);
 }
-writeFileSync(path.join(directory,'results.json'),JSON.stringify({manifest,records,summary},null,2)+'\n');
+const checksums=['matched-native','matched-browser'].map(name=>{
+  const result=spawnSync('ffmpeg',['-v','error','-i',path.join(directory,`${name}.mp4`),'-pix_fmt','rgba','-f','framemd5','-'],{encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+  return result.stdout;
+});
+const matched_fixture_decoded_frames_identical=checksums[0]===checksums[1];
+writeFileSync(path.join(directory,'results.json'),JSON.stringify({manifest,records,summary,matched_fixture_decoded_frames_identical},null,2)+'\n');
 console.log(JSON.stringify(summary,null,2));

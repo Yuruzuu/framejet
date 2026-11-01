@@ -1,7 +1,7 @@
 {
   "manifest": {
     "version": "framejet 0.2.0-dev",
-    "binary_sha256": "f6b0e5f51b144a381c5d1fcfe8116894614b6d3ae0acaa08600bfd3cb17b35e6",
+    "binary_sha256": "4aabe4c33458f3973687ab2f17aeca2c519a63f5ee6ff027f99a9bc4d7c7e36b",
     "cpu": "Apple M4 Pro",
     "logical_cpus": 14,
     "memory_bytes": 25769803776,
@@ -44,7 +44,7 @@
         "sha256": "433b071b1d7c9c768b08bcad3c81dee75b4898cc4001f3290ae020bebc37c43a"
       }
     ],
-    "renderer_commit": "13b9368988e2d45cf6945f1133fc131dc80c6ae5",
+    "renderer_commit": "a62331bfd63f33bd0daa5d5b8304aa50e0a1633e",
     "node": "v24.13.1"
   },
   "records": [
@@ -52,113 +52,113 @@
       "name": "css-smil-540p",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 6.661025458,
-      "processing_seconds": 6.586329417
+      "wall_seconds": 6.65709825,
+      "processing_seconds": 6.602271583
     },
     {
       "name": "css-smil-1080p",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 18.322601209,
-      "processing_seconds": 18.26047775
+      "wall_seconds": 16.760035792,
+      "processing_seconds": 16.7032395
     },
     {
       "name": "matched-native",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 0.135573125,
-      "processing_seconds": 0.098395042
+      "wall_seconds": 0.12891225,
+      "processing_seconds": 0.093727125
     },
     {
       "name": "matched-browser",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 2.341969791,
-      "processing_seconds": 2.294394375
+      "wall_seconds": 2.333597375,
+      "processing_seconds": 2.287415458
     },
     {
       "name": "matched-browser",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 2.33841775,
-      "processing_seconds": 2.289541167
+      "wall_seconds": 2.31427525,
+      "processing_seconds": 2.266902458
     },
     {
       "name": "matched-native",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 0.130046375,
-      "processing_seconds": 0.098537
+      "wall_seconds": 0.121939041,
+      "processing_seconds": 0.0913675
     },
     {
       "name": "css-smil-1080p",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 17.938652833,
-      "processing_seconds": 17.881573958
+      "wall_seconds": 17.409307083,
+      "processing_seconds": 17.355454375
     },
     {
       "name": "css-smil-540p",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 7.067906834,
-      "processing_seconds": 7.014591083
+      "wall_seconds": 6.527124542,
+      "processing_seconds": 6.471118625
     },
     {
       "name": "css-smil-540p",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 6.385867541,
-      "processing_seconds": 6.313576542
+      "wall_seconds": 6.360151375,
+      "processing_seconds": 6.310688625
     },
     {
       "name": "css-smil-1080p",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 18.363869917,
-      "processing_seconds": 18.305546875
+      "wall_seconds": 18.382961167,
+      "processing_seconds": 18.323606416
     },
     {
       "name": "matched-native",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 0.132540959,
-      "processing_seconds": 0.098000708
+      "wall_seconds": 0.145560625,
+      "processing_seconds": 0.107491625
     },
     {
       "name": "matched-browser",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 2.368815792,
-      "processing_seconds": 2.318993667
+      "wall_seconds": 2.358270084,
+      "processing_seconds": 2.308401584
     },
     {
       "name": "matched-browser",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 2.3272095,
-      "processing_seconds": 2.2760552499999998
+      "wall_seconds": 2.354079625,
+      "processing_seconds": 2.303843583
     },
     {
       "name": "matched-native",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 0.136494916,
-      "processing_seconds": 0.103122084
+      "wall_seconds": 0.120606125,
+      "processing_seconds": 0.090538875
     },
     {
       "name": "css-smil-1080p",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 18.4168315,
-      "processing_seconds": 18.364091666
+      "wall_seconds": 18.123041375,
+      "processing_seconds": 18.067946709
     },
     {
       "name": "css-smil-540p",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 6.380226875,
-      "processing_seconds": 6.327568625
+      "wall_seconds": 6.365380417,
+      "processing_seconds": 6.312704458
     }
   ],
   "summary": [
@@ -166,48 +166,48 @@
       "name": "css-smil-540p",
       "width": 960,
       "height": 540,
-      "median_seconds": 6.385867541,
-      "whole_command_fps": 18.79149531830228,
+      "median_seconds": 6.365380417,
+      "whole_command_fps": 18.851976180326382,
       "samples": [
-        7.067906834,
-        6.385867541,
-        6.380226875
+        6.527124542,
+        6.360151375,
+        6.365380417
       ]
     },
     {
       "name": "css-smil-1080p",
       "width": 1920,
       "height": 1080,
-      "median_seconds": 18.363869917,
-      "whole_command_fps": 6.534570357030917,
+      "median_seconds": 18.123041375,
+      "whole_command_fps": 6.621405177915398,
       "samples": [
-        17.938652833,
-        18.363869917,
-        18.4168315
+        17.409307083,
+        18.382961167,
+        18.123041375
       ]
     },
     {
       "name": "matched-native",
       "width": 960,
       "height": 540,
-      "median_seconds": 0.132540959,
-      "whole_command_fps": 905.3805020378643,
+      "median_seconds": 0.121939041,
+      "whole_command_fps": 984.0982757933942,
       "samples": [
-        0.130046375,
-        0.132540959,
-        0.136494916
+        0.121939041,
+        0.145560625,
+        0.120606125
       ]
     },
     {
       "name": "matched-browser",
       "width": 960,
       "height": 540,
-      "median_seconds": 2.33841775,
-      "whole_command_fps": 51.316750396715896,
+      "median_seconds": 2.354079625,
+      "whole_command_fps": 50.9753360615404,
       "samples": [
-        2.33841775,
-        2.368815792,
-        2.3272095
+        2.31427525,
+        2.358270084,
+        2.354079625
       ]
     }
   ],
