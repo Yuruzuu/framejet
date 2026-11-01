@@ -71,7 +71,7 @@ export async function createSvgBrowser(configuration, video) {
   try {
     await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
     try {
-      browser = await chromium.launch({ headless: true });
+      browser = await chromium.launch({ headless: true, channel: 'chromium' });
     } catch (error) {
       throw new Error(`Cannot launch the SVG renderer. Run framejet setup. ${error.message}`);
     }
