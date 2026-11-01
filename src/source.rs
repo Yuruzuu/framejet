@@ -201,7 +201,7 @@ impl Source {
     }
 
     pub fn batch_size(&self) -> usize {
-        (64 * 1024 * 1024 / self.video.frame_bytes()).clamp(1, self.threads * 2)
+        (256 * 1024 * 1024 / self.video.frame_bytes()).clamp(1, self.threads * 2)
     }
 
     /// Asks the runtime for a batch, which it may generate ahead of `collect`.

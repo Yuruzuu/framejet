@@ -240,11 +240,11 @@ impl Drop for Worker {
         if let Some(mut input) = self.input.take() {
             let _ = input.write_all(b"{\"command\":\"close\"}\n");
         }
-        for _ in 0..20 {
+        for _ in 0..500 {
             if self.child.try_wait().ok().flatten().is_some() {
                 return;
             }
-            std::thread::sleep(Duration::from_millis(25));
+            std::thread::sleep(Duration::from_millis(1));
         }
         let _ = self.child.kill();
         let _ = self.child.wait();

@@ -22,6 +22,7 @@ if (existsSync(path.join(directory, 'results.json'))) throw new Error('Results a
 mkdirSync(directory, { recursive: true });
 const workloads = [
   { name: 'svg-titles', input: 'examples/hello.svg.mjs', width: 1920, height: 1080, duration: 6 },
+  { name: 'svg-titles-4k', input: 'examples/hello.svg.mjs', width: 3840, height: 2160, duration: 3 },
   { name: 'svg-particles', input: 'bench/particles.svg.mjs', width: 1280, height: 720, duration: 4 },
   { name: 'three-orbit', input: 'examples/orbit.three.mjs', width: 1280, height: 720, duration: 6 },
   { name: 'static-svg', input: 'tests/fixtures/bands.svg', width: 1920, height: 1080, duration: 6 },

@@ -230,3 +230,5 @@ process.on('SIGINT', () => { close().finally(() => process.exit(130)); });
 try { await main(); }
 catch (error) { await packet(2, error.stack || error.message); process.exitCode = 1; }
 finally { await close(); }
+// Cleanup is complete and stdout writes are synchronous; skip Node's own teardown.
+process.exit();
