@@ -13,6 +13,8 @@ Inspired by [FFrames](https://github.com/dmtrKovalenko/fframes). Framejet uses i
 
 Requires **Node.js 20+**, **npm**, and **FFmpeg** on `PATH`. Static SVG → PNG needs neither Node nor FFmpeg. Building from source also requires Rust.
 
+The [GitHub release](https://github.com/Yuruzuu/framejet/releases/latest) also provides a macOS Apple Silicon binary: unpack it and place `framejet` on your `PATH`, then run `framejet setup`.
+
 ```sh
 cargo install --git https://github.com/Yuruzuu/framejet --locked
 framejet setup
@@ -118,6 +120,18 @@ See [examples/orbit.three.mjs](examples/orbit.three.mjs).
 - Three.js uses WebGL2, synchronous pixel readback, and a local browser. Actual GPU/software rendering depends on Chromium and the machine; the JSON result records its renderer string.
 - MP4 is silent H.264 with an opaque background. Audio, alpha video, TypeScript compilation, arbitrary web-page recording, and WebGPU scenes are outside this release.
 - First-time installation and browser startup can dominate short jobs. No speedup over another exporter is guaranteed; benchmark the same scene, dimensions, frame rate, and quality.
+
+## Claude and Codex skill
+
+The shared [Framejet skill](skills/framejet/SKILL.md) contains the adapter contract and export workflow. From this checkout (or the unpacked release), install it for both agents:
+
+```sh
+mkdir -p ~/.codex/skills/framejet ~/.claude/skills/framejet
+cp skills/framejet/SKILL.md ~/.codex/skills/framejet/SKILL.md
+cp skills/framejet/SKILL.md ~/.claude/skills/framejet/SKILL.md
+```
+
+Start a new agent session to discover the skill, then ask it to render an SVG or Three.js animation as a video.
 
 ## Checks
 
