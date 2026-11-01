@@ -25,3 +25,4 @@ jobs:
       - run: node runtime/node_modules/playwright-core/cli.js install --with-deps chromium
       - run: target/release/framejet setup --skip-browser
       - run: node scripts/smoke.mjs
+      - run: node scripts/svg-animation-smoke.mjs

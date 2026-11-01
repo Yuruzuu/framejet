@@ -5,11 +5,11 @@ description: Render SVG or Three.js animations as MP4 videos with Framejet, and 
 
 # Framejet
 
-Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. If missing, install with `cargo install --git https://github.com/Yuruzuu/framejet --tag v0.1.2 --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the pinned Three.js runtime and Chromium. SVG-only use does not need Chromium.
+Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. The CSS/SMIL development build installs with `cargo install --git https://github.com/Yuruzuu/framejet --branch feat/svg-animations --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the runtime and Chromium. Native static SVG does not need Chromium; CSS/SMIL and Three.js do.
 
 Create a small `.mjs` adapter next to existing animation assets, preserving the requested design and original source. Animation comes from explicit `time` in seconds, not timers or real-time playback. Frame/contact-sheet requests can sample times out of order. Await asset loads before rendering.
 
-**SVG:** name the adapter `animation.svg.mjs`. Export metadata and a function returning the complete static SVG state at each time:
+**SVG:** existing `.svg` files with CSS keyframes or timed SMIL render directly: `framejet render animation.svg --duration 4 -o video.mp4`. Auto mode samples CSS/SMIL in Chromium and keeps static SVG native. `--svg-renderer browser|native|auto` selects explicitly. For JavaScript-generated motion, name the adapter `animation.svg.mjs` and export metadata plus a function returning complete SVG markup at each time:
 
 ```js
 export const video = { width: 1280, height: 720, fps: 30, duration: 3 };
@@ -32,4 +32,4 @@ For clean motion graphics, prefer `--encoder software --crf 18` for small, high-
 
 Inspect useful frames/contact sheets before the final export. Both inputs support `--width`, `--height`, `--fps`, and `--duration`; MP4 needs even dimensions. Use `--font Brand.ttf` for SVG fonts. Existing files require explicit `--force`. Commands print JSON on stdout and diagnostics on stderr; report failures rather than treating a partial file as success. Deliver the actual output path.
 
-Limits: native SVG is CPU rendered and cannot execute CSS/SMIL animation, scripts, or `foreignObject`; sample their visual state in the adapter. Three.js uses WebGL2 in Chromium, with Metal requested on macOS. `--software-rendering` forces SwiftShader; `--encoder software` selects x264 independently. MP4 is silent and opaque. TypeScript compilation, WebGPU scenes, audio, and arbitrary HTML recording are unsupported. Do not replace animation with a static snapshot or promise a speedup without a matched benchmark.
+Limits: CSS/SMIL export controls the SVG document's time-based timelines; interaction triggers, transition histories, scroll timelines, scripts, `foreignObject`, and independently animated images are unsupported. Browser SVG uses system fonts and CSS `@font-face`; `--font` is native-only. Three.js uses WebGL2 in Chromium, with Metal requested on macOS. `--software-rendering` forces SwiftShader; `--encoder software` selects x264 independently. MP4 is silent and opaque. TypeScript compilation, WebGPU scenes, audio, and arbitrary HTML recording are unsupported. Do not replace animation with a static snapshot or promise a speedup without a matched benchmark.

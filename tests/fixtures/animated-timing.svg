@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96">
+  <style>
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(64px); } }
+    #short { animation: fade 0.001s linear both; }
+    #negative { animation: slide 2s linear -1s forwards; }
+    #step { animation: slide 2s steps(2, end) forwards; }
+  </style>
+  <rect id="short" width="16" height="16" fill="red"/>
+  <rect id="negative" y="24" width="16" height="16" fill="lime"/>
+  <rect id="step" y="48" width="16" height="16" fill="blue"/>
+</svg>

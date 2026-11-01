@@ -32,6 +32,10 @@ pub fn prepare() -> Result<PathBuf> {
     for (name, content) in [
         ("worker.mjs", include_str!("../runtime/worker.mjs")),
         (
+            "svg-browser.mjs",
+            include_str!("../runtime/svg-browser.mjs"),
+        ),
+        (
             "frame-transport.js",
             include_str!("../runtime/frame-transport.js"),
         ),
@@ -85,7 +89,7 @@ pub fn setup(skip_browser: bool) -> Result<()> {
 fn serve_frames(
     listener: TcpListener,
     token: String,
-    frames: mpsc::SyncSender<Result<Vec<u8>, String>>,
+    frames: mpsc::SyncSender<Result<RuntimePacket, String>>,
 ) {
     let expected = format!("/frames/{token}");
     let configuration = WebSocketConfig::default()
@@ -116,13 +120,19 @@ fn serve_frames(
 
 fn forward_frames(
     mut socket: WebSocket<TcpStream>,
-    frames: &mpsc::SyncSender<Result<Vec<u8>, String>>,
+    frames: &mpsc::SyncSender<Result<RuntimePacket, String>>,
 ) {
     loop {
         let result = match socket.read() {
             Ok(Message::Close(_)) => Err(tungstenite::Error::ConnectionClosed),
             Ok(Message::Binary(bytes)) => {
-                if frames.send(Ok(Vec::from(bytes))).is_err() {
+                if frames
+                    .send(Ok(RuntimePacket {
+                        kind: 1,
+                        bytes: Vec::from(bytes),
+                    }))
+                    .is_err()
+                {
                     return;
                 }
                 socket.send(Message::text("ok"))
@@ -141,10 +151,15 @@ fn forward_frames(
 
 const MAX_FRAME_BYTES: usize = 134_217_728;
 
+pub struct RuntimePacket {
+    pub kind: u8,
+    pub bytes: Vec<u8>,
+}
+
 pub struct Worker {
     child: Child,
     input: Option<ChildStdin>,
-    messages: mpsc::Receiver<Result<Vec<u8>, String>>,
+    messages: mpsc::Receiver<Result<RuntimePacket, String>>,
     timeout: Duration,
     cancelled: Arc<AtomicBool>,
 }
@@ -184,7 +199,7 @@ impl Worker {
         std::thread::spawn(move || {
             let mut reader = BufReader::new(output);
             loop {
-                let packet = (|| -> Result<Vec<u8>> {
+                let packet = (|| -> Result<RuntimePacket> {
                     let mut header = [0u8; 5];
                     reader.read_exact(&mut header)?;
                     let length = u32::from_le_bytes(header[1..].try_into()?) as usize;
@@ -197,8 +212,11 @@ impl Worker {
                     if header[0] == 2 {
                         bail!("{}", String::from_utf8_lossy(&bytes));
                     }
-                    ensure!(header[0] <= 1, "Invalid runtime packet");
-                    Ok(bytes)
+                    ensure!(matches!(header[0], 0 | 1 | 3), "Invalid runtime packet");
+                    Ok(RuntimePacket {
+                        kind: header[0],
+                        bytes,
+                    })
                 })()
                 .map_err(|error| format!("{error:#}"));
                 let failed = packet.is_err();
@@ -229,6 +247,10 @@ impl Worker {
     }
 
     pub fn receive(&mut self) -> Result<Vec<u8>> {
+        Ok(self.receive_packet()?.bytes)
+    }
+
+    pub fn receive_packet(&mut self) -> Result<RuntimePacket> {
         let started = Instant::now();
         loop {
             ensure!(!self.cancelled.load(Ordering::Relaxed), "Cancelled");

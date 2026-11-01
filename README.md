@@ -2,7 +2,7 @@
 
 A Rust CLI that turns SVG and Three.js animations into MP4 videos, PNG frames, and contact sheets.
 
-- **SVG:** JavaScript calculates each frame's SVG; Rust rasterizes it in parallel with [resvg](https://github.com/linebender/resvg). Static `.svg` inputs work too.
+- **SVG:** Rust rasterizes static SVGs and generated frame markup in parallel with [resvg](https://github.com/linebender/resvg). SVGs with CSS keyframes or SMIL use Chromium with paused, explicitly sampled timelines.
 - **Three.js:** one persistent Chromium session loads the scene once. Fenced GPU readback and a binary WebSocket in a shared worker send raw pixels directly to the CLI, with a few frames in flight, avoiding PNG capture and Node in the data path.
 - **Video:** frames stream to FFmpeg with bounded batches. On macOS, `auto` probes VideoToolbox hardware encoding and uses x264 if unavailable. A dedicated writer thread keeps FFmpeg fed while the next batch renders.
 - **Agents:** exact frame times, JSON results on stdout, progress/errors on stderr, and review images before a full export.
@@ -70,6 +70,28 @@ When file size matters more, try `--crf 20`, then review before increasing to `2
 
 ## SVG animation API
 
+### CSS and SMIL
+
+CSS/SMIL support is currently on the `feat/svg-animations` development branch:
+
+```sh
+cargo install --git https://github.com/Yuruzuu/framejet --branch feat/svg-animations --locked
+framejet setup
+framejet render animation.svg --duration 4 --fps 30 --encoder software -o video.mp4
+framejet frame animation.svg --time 1.5 -o frame.png
+framejet contact-sheet animation.svg --duration 4 -o sheet.png
+```
+
+Automatic detection handles time-based CSS keyframes, SMIL `<animate>`, `<animateTransform>`, `<animateMotion>`, and `<set>`, plus external SVG stylesheets. SVG-returning `.mjs` modules can include these declarations too, without rewriting them into JavaScript animation math. Ordinary static markup keeps the native renderer, including in batches that mix static and animated SVGs.
+
+Use `--svg-renderer browser` to force Chromium, `--svg-renderer native` to require static native rendering, or the default `auto` to select as needed. Raw SVGs still default to a three-second, 30 fps export; use `--duration` for longer timelines or infinite loops. Sample times are absolute seconds from the animation's start, including CSS delays, repeat/direction/fill rules, and authored paused states. Frames may be sampled out of order.
+
+Chromium draws animated SVGs directly; this path uses PNG capture and has different performance and text rasterization from native SVG rendering. Assets and CSS URLs resolve beside the input file. System fonts and CSS `@font-face` work in the browser; `--font` remains native-only. SVG scripts and `foreignObject` remain unsupported. Interaction-driven triggers, CSS transition histories, scroll timelines, and independently animated embedded images are not simulated.
+
+See [examples/css-smil.svg](examples/css-smil.svg), which combines CSS text animation with SMIL rotation and progress.
+
+### JavaScript-generated frames
+
 Create `animation.svg.mjs`:
 
 ```js
@@ -84,7 +106,7 @@ export function render({ time, frame, width, height, fps, duration }) {
 }
 ```
 
-`render` may be async and must return a complete, static SVG string for that time. Calculate motion from the supplied `time`; avoid wall-clock time, unseeded randomness, and incremental state. Imports use normal Node ESM resolution. Load large assets once at module scope. Optional `dispose()` runs when the session closes.
+`render` may be async and must return a complete SVG string for that time. Calculate JavaScript-driven motion from the supplied `time`; embedded CSS/SMIL is sampled at that same time by the browser. Avoid wall-clock time, unseeded randomness, and incremental state. Imports use normal Node ESM resolution. Load large assets once at module scope. Optional `dispose()` runs when the session closes.
 
 Relative SVG image references resolve from the animation file's directory. Embed remote images or download them locally first. Use local/system fonts; `--font` provides explicit font files. SVG scales proportionally and centers within overridden dimensions. The canvas is opaque black unless your SVG paints a background.
 
@@ -128,7 +150,7 @@ See [examples/orbit.three.mjs](examples/orbit.three.mjs).
 ## Version-one limits
 
 - Native SVG is CPU rendered. Static markup is parsed for every generated frame; it does not have FFrames' compile-time subtree caching or Skia GPU backend.
-- Existing HTML/CSS/SMIL animations need an adapter that samples their state. Embedded SVG animation, scripts, and `foreignObject` are rejected.
+- SVG CSS keyframes and timed SMIL are supported on the development branch through Chromium. Arbitrary HTML recording, SVG scripts, `foreignObject`, and interaction-driven animation are outside this support.
 - Three.js uses WebGL2, synchronous pixel readback, and a local browser. Actual GPU/software rendering depends on Chromium and the machine; the JSON result records its renderer string.
 - MP4 is silent H.264 with an opaque background. Audio, alpha video, TypeScript compilation, arbitrary web-page recording, and WebGPU scenes are outside this release.
 - First-time installation and browser startup can dominate short jobs. No speedup over another exporter is guaranteed; benchmark the same scene, dimensions, frame rate, and quality.
@@ -154,6 +176,7 @@ cargo test --locked
 cargo build --release --locked
 ./target/release/framejet setup
 node scripts/smoke.mjs
+node scripts/svg-animation-smoke.mjs
 ```
 
 The smoke test requires `ffprobe` as well as FFmpeg. It checks both backends' H.264 output, exact frame count and duration, visible motion, raw PNG colors/orientation, and cleanup after a partial render failure.

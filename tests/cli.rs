@@ -54,10 +54,35 @@ fn static_svg_preserves_orientation_and_composites_alpha() {
 fn unsupported_animation_fails_without_creating_output() {
     let directory = TempDir::new().unwrap();
     fs::write(directory.path().join("scene.svg"), r#"<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><animate attributeName="x" to="10"/></svg>"#).unwrap();
-    let output = run(&["frame", "scene.svg", "-o", "image.png"], directory.path());
+    let output = run(
+        &[
+            "frame",
+            "scene.svg",
+            "-o",
+            "image.png",
+            "--svg-renderer",
+            "native",
+        ],
+        directory.path(),
+    );
     assert!(!output.status.success());
-    assert!(String::from_utf8_lossy(&output.stderr).contains("Unsupported SVG element"));
+    assert!(String::from_utf8_lossy(&output.stderr).contains("CSS/SMIL animation requires"));
     assert!(!directory.path().join("image.png").exists());
+}
+
+#[test]
+fn static_svg_animation_labels_stay_native() {
+    let directory = TempDir::new().unwrap();
+    let markup = r#"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><!-- <animate> @keyframes --><style>.animation { fill: lime; }</style><rect class="animation" width="16" height="16"/><text y="100">animation: static label</text></svg>"#;
+    fs::write(directory.path().join("scene.svg"), markup).unwrap();
+    fs::write(directory.path().join("scene.mjs"), format!("export const video = {{ width:16, height:16 }}; export function render() {{ return {}; }}", serde_json::to_string(markup).unwrap())).unwrap();
+    for (input, output) in [("scene.svg", "static.png"), ("scene.mjs", "module.png")] {
+        success(run(&["frame", input, "-o", output], directory.path()));
+        assert_eq!(
+            &pixels(&directory.path().join(output)).2[..4],
+            &[0, 255, 0, 255]
+        );
+    }
 }
 
 #[test]

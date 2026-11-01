@@ -43,9 +43,32 @@ let server;
 let session;
 let render;
 let dispose;
+let svgBrowser;
+
+function browserSvgRequired(svg) {
+  const source = svg.replace(/<!--[\s\S]*?-->/g, '');
+  if (/<(?:[\w.-]+:)?(?:animate(?:Transform|Motion|Color)?|set|link)\b|<\?xml-stylesheet\b/i.test(source)) return true;
+  const animated = style => /@(?:-webkit-)?keyframes\b|@import\b|(?:^|[;{])\s*(?:-webkit-)?animation(?:-[\w-]+)?\s*:/i.test(style);
+  for (const match of source.matchAll(/<(?:[\w.-]+:)?style\b[^>]*>([\s\S]*?)<\/(?:[\w.-]+:)?style\s*>/gi)) {
+    if (animated(match[1])) return true;
+  }
+  for (const match of source.matchAll(/\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)) {
+    if (animated(match[1] || match[2])) return true;
+  }
+  return false;
+}
+
+async function renderBrowserSvg(configuration, video, svg, time, reuse = false) {
+  if (!svgBrowser) {
+    const { createSvgBrowser } = await import('./svg-browser.mjs');
+    svgBrowser = await createSvgBrowser(configuration, video);
+  }
+  await packet(3, await svgBrowser.render(svg, time, reuse));
+}
 
 async function close() {
   await dispose?.();
+  await svgBrowser?.close();
   await browser?.close();
   server?.closeAllConnections();
   if (server) await new Promise(resolve => server.close(resolve));
@@ -248,6 +271,16 @@ async function main() {
     const command = JSON.parse(line);
     if (!session) {
       if (command.backend === 'three') session = await startThree(command);
+      else if (command.backend === 'svg-browser') {
+        session = metadata(command.video, command.overrides);
+        const svg = await readFile(command.input, 'utf8');
+        render = async samples => {
+          for (const sample of samples) {
+            try { await renderBrowserSvg(command, session, svg, sample.time, true); }
+            catch (error) { throw new Error(`Frame ${sample.frame} at ${sample.time}s: ${error.message}`); }
+          }
+        };
+      }
       else {
         const animation = await import(pathToFileURL(command.input).href);
         session = metadata(animation.video, command.overrides);
@@ -257,7 +290,12 @@ async function main() {
             try {
               const svg = await animation.render({ ...session, ...sample });
               if (typeof svg !== 'string') throw new Error('render() must return an SVG string');
-              await packet(1, svg);
+              if (command.svgRenderer === 'native' && browserSvgRequired(svg)) {
+                throw new Error('CSS/SMIL animation requires --svg-renderer browser; native rendering only accepts static SVG');
+              }
+              if (command.svgRenderer === 'browser' || (command.svgRenderer !== 'native' && browserSvgRequired(svg))) {
+                await renderBrowserSvg(command, session, svg, sample.time);
+              } else await packet(1, svg);
             } catch (error) { throw new Error(`Frame ${sample.frame} at ${sample.time}s: ${error.message}`); }
           }
         };

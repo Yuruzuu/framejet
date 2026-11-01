@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96">
+  <style>
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(64px); } }
+    #css { animation: slide 2s linear forwards; }
+  </style>
+  <rect id="css" y="0" width="16" height="16" fill="red"/>
+  <rect y="24" width="16" height="16" fill="lime">
+    <animate attributeName="x" from="0" to="64" dur="2s" fill="freeze"/>
+  </rect>
+  <g>
+    <rect y="48" width="16" height="16" fill="blue"/>
+    <animateTransform attributeName="transform" type="translate" from="0 0" to="64 0" dur="2s" fill="freeze"/>
+  </g>
+  <rect y="72" width="16" height="16" fill="purple">
+    <set attributeName="fill" to="yellow" begin="1s" dur="0.5s"/>
+  </rect>
+</svg>

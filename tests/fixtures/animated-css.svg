@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96">
+  <style>
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(64px); } }
+    #delayed { animation: slide 1s linear 0.5s 2 alternate both; }
+    #paused { animation: slide 1s linear forwards paused; }
+  </style>
+  <rect id="delayed" width="16" height="16" fill="red"/>
+  <rect id="paused" y="24" width="16" height="16" fill="lime"/>
+  <rect y="48" width="16" height="16" fill="blue">
+    <animateMotion path="M 0 0 L 64 0" dur="2s" fill="freeze"/>
+  </rect>
+</svg>

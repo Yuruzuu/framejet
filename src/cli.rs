@@ -64,6 +64,9 @@ pub struct SourceArgs {
     /// Auto selects Three.js for *.three.mjs and SVG otherwise.
     #[arg(long, value_enum, default_value = "auto")]
     pub backend: Backend,
+    /// SVG engine: auto uses Chromium for CSS/SMIL, native requires static markup.
+    #[arg(long, value_enum, default_value = "auto")]
+    pub svg_renderer: SvgRendering,
     #[arg(long)]
     pub width: Option<u32>,
     #[arg(long)]
@@ -104,6 +107,13 @@ pub enum Backend {
     Auto,
     Svg,
     Three,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, ValueEnum)]
+pub enum SvgRendering {
+    Auto,
+    Native,
+    Browser,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, ValueEnum)]

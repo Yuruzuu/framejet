@@ -7,6 +7,23 @@ use std::{
 
 type FontLoader = std::thread::JoinHandle<usvg::fontdb::Database>;
 
+fn css_requires_browser(style: &str) -> bool {
+    let style = style.to_ascii_lowercase();
+    style.contains("@keyframes")
+        || style.contains("@-webkit-keyframes")
+        || style.contains("@import")
+        || style.split(['{', ';', '}']).any(|declaration| {
+            let Some((property, _)) = declaration.split_once(':') else {
+                return false;
+            };
+            let property = property
+                .trim()
+                .strip_prefix("-webkit-")
+                .unwrap_or(property.trim());
+            property == "animation" || property.starts_with("animation-")
+        })
+}
+
 pub struct SvgRenderer {
     /// Empty font database: enough for any SVG without text.
     plain: usvg::Options<'static>,
@@ -17,6 +34,42 @@ pub struct SvgRenderer {
 }
 
 impl SvgRenderer {
+    pub fn requires_browser(svg: &str) -> Result<bool> {
+        let document = roxmltree::Document::parse(svg).context("Invalid SVG XML")?;
+        let mut animated = false;
+        for node in document.descendants() {
+            if let Some(instruction) = node.pi() {
+                animated |= instruction.target == "xml-stylesheet";
+            }
+            if !node.is_element() {
+                continue;
+            }
+            let name = node.tag_name().name();
+            ensure!(
+                !matches!(name, "script" | "foreignObject"),
+                "Unsupported SVG element <{name}>"
+            );
+            animated |= matches!(
+                name,
+                "animate" | "animateTransform" | "animateMotion" | "animateColor" | "set"
+            );
+            if name == "style" {
+                let style = node
+                    .descendants()
+                    .filter_map(|part| if part.is_text() { part.text() } else { None })
+                    .collect::<String>()
+                    .to_ascii_lowercase();
+                animated |= css_requires_browser(&style);
+            }
+            animated |= node.attribute("style").is_some_and(css_requires_browser);
+            animated |= name == "link"
+                && node
+                    .attribute("rel")
+                    .is_some_and(|value| value.contains("stylesheet"));
+        }
+        Ok(animated)
+    }
+
     pub fn new(input: &Path, fonts: &[std::path::PathBuf]) -> Result<Self> {
         let resources = input.parent().map(Path::to_path_buf);
         // Report unusable --font files immediately, even if nothing draws text.
@@ -89,12 +142,12 @@ impl SvgRenderer {
                         | "script"
                         | "foreignObject"
                 ),
-                "Unsupported SVG element <{name}>. Return a static SVG state for each render({{ time, frame }}) call instead"
+                "Unsupported SVG element <{name}> in native rendering. Use --svg-renderer browser for CSS/SMIL animation"
             );
             if name == "style" {
                 ensure!(
                     !node.text().unwrap_or_default().contains("@keyframes"),
-                    "CSS animation is unsupported; calculate the SVG state from time in render()"
+                    "CSS animation requires --svg-renderer browser"
                 );
             }
         }
@@ -108,6 +161,14 @@ impl SvgRenderer {
 
     pub fn dimensions(&self, svg: &str) -> Result<(u32, u32)> {
         let tree = self.parse(svg)?;
+        Ok((
+            tree.size().width().ceil() as u32,
+            tree.size().height().ceil() as u32,
+        ))
+    }
+
+    pub fn animated_dimensions(&self, svg: &str) -> Result<(u32, u32)> {
+        let tree = usvg::Tree::from_str(svg, &self.plain).context("Cannot parse SVG dimensions")?;
         Ok((
             tree.size().width().ceil() as u32,
             tree.size().height().ceil() as u32,

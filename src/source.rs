@@ -1,5 +1,5 @@
 use crate::{
-    cli::{Backend, SourceArgs},
+    cli::{Backend, SourceArgs, SvgRendering},
     runtime::Worker,
     svg::SvgRenderer,
 };
@@ -162,10 +162,26 @@ impl Source {
         };
         let mut worker = None;
         let mut static_pixels = None;
+        let mut configuration = serde_json::json!({"input":input,"backend":backend,"softwareRendering":arguments.software_rendering,
+        "svgRenderer":match arguments.svg_renderer { SvgRendering::Auto => "auto", SvgRendering::Native => "native", SvgRendering::Browser => "browser" },
+        "nativeFonts":!arguments.font.is_empty(),"overrides":{
+            "width":arguments.width,"height":arguments.height,"fps":arguments.fps,"duration":arguments.duration
+        }});
         let video = if extension == "svg" {
             let markup = fs::read_to_string(&input)?;
             let renderer = svg.as_ref().context("SVG renderer is missing")?;
-            let (width, height) = renderer.dimensions(&markup)?;
+            let animated = SvgRenderer::requires_browser(&markup)?;
+            ensure!(
+                !animated || arguments.svg_renderer != SvgRendering::Native,
+                "CSS/SMIL animation requires --svg-renderer browser; native rendering only accepts static SVG"
+            );
+            let browser = arguments.svg_renderer == SvgRendering::Browser
+                || (arguments.svg_renderer == SvgRendering::Auto && animated);
+            let (width, height) = if browser {
+                renderer.animated_dimensions(&markup)?
+            } else {
+                renderer.dimensions(&markup)?
+            };
             let video = Video {
                 width: arguments.width.unwrap_or(width),
                 height: arguments.height.unwrap_or(height),
@@ -174,17 +190,28 @@ impl Source {
                 gpu: None,
             };
             video.validate()?;
-            static_pixels = Some(Arc::new(renderer.render(
-                &markup,
-                video.width,
-                video.height,
-                vec![0; video.frame_bytes()],
-            )?));
+            if browser {
+                configuration["backend"] = "svg-browser".into();
+                configuration["video"] = serde_json::to_value(&video)?;
+                let mut runtime = Worker::start(
+                    &mut configuration,
+                    false,
+                    arguments.timeout,
+                    cancelled.clone(),
+                )?;
+                let _: Video =
+                    serde_json::from_slice(&runtime.receive()?).context("Invalid SVG metadata")?;
+                worker = Some(runtime);
+            } else {
+                static_pixels = Some(Arc::new(renderer.render(
+                    &markup,
+                    video.width,
+                    video.height,
+                    vec![0; video.frame_bytes()],
+                )?));
+            }
             video
         } else {
-            let mut configuration = serde_json::json!({"input":input,"backend":backend,"softwareRendering":arguments.software_rendering,"overrides":{
-                "width":arguments.width,"height":arguments.height,"fps":arguments.fps,"duration":arguments.duration
-            }});
             let mut runtime = Worker::start(
                 &mut configuration,
                 backend == "three",
@@ -245,7 +272,7 @@ impl Source {
         if let Some(renderer) = &self.svg {
             let markups = samples
                 .iter()
-                .map(|_| worker.receive())
+                .map(|_| worker.receive_packet())
                 .collect::<Result<Vec<_>>>()?;
             let buffers = &self.buffers;
             let video = &self.video;
@@ -253,8 +280,27 @@ impl Source {
                 markups
                     .into_par_iter()
                     .zip(samples.par_iter())
-                    .map(|(bytes, sample)| {
-                        let markup = String::from_utf8(bytes).context("SVG is not valid UTF-8")?;
+                    .map(|(packet, sample)| {
+                        if packet.kind == 3 {
+                            let image = resvg::tiny_skia::Pixmap::decode_png(&packet.bytes)
+                                .context("Invalid browser SVG PNG")?;
+                            ensure!(
+                                image.width() == video.width && image.height() == video.height,
+                                "Browser SVG frame dimensions differ from video dimensions"
+                            );
+                            let mut pixels = buffers.take(video.frame_bytes());
+                            pixels.copy_from_slice(image.data());
+                            for pixel in pixels.as_chunks_mut::<4>().0 {
+                                pixel[3] = 255;
+                            }
+                            return Ok(pixels);
+                        }
+                        ensure!(
+                            packet.kind == 1,
+                            "Expected SVG markup or a browser SVG frame"
+                        );
+                        let markup =
+                            String::from_utf8(packet.bytes).context("SVG is not valid UTF-8")?;
                         renderer
                             .render(
                                 &markup,

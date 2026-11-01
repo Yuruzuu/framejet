@@ -1,0 +1,2 @@
+@keyframes slide { from { transform: translateX(0); } to { transform: translateX(64px); } }
+#moving { fill: red; animation: slide 2s linear forwards; }
