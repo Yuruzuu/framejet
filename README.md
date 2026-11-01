@@ -3,11 +3,13 @@
 A Rust CLI that turns SVG and Three.js animations into MP4 videos, PNG frames, and contact sheets.
 
 - **SVG:** JavaScript calculates each frame's SVG; Rust rasterizes it in parallel with [resvg](https://github.com/linebender/resvg). Static `.svg` inputs work too.
-- **Three.js:** one persistent Chromium session loads the scene once and transfers raw WebGL pixels over a binary WebSocket. No per-frame screenshots or intermediate PNG files.
+- **Three.js:** one persistent Chromium session loads the scene once and transfers raw WebGL pixels over a binary WebSocket in a shared worker, avoiding duplicated DevTools frame traffic. No per-frame screenshots or intermediate PNG files.
 - **Video:** frames stream to FFmpeg with bounded batches. On macOS, `auto` probes VideoToolbox hardware encoding and uses x264 if unavailable.
 - **Agents:** exact frame times, JSON results on stdout, progress/errors on stderr, and review images before a full export.
 
 Inspired by [FFrames](https://github.com/dmtrKovalenko/fframes). Framejet uses its own JavaScript animation adapters; it does not import FFrames projects or replace Three.js with a native 3D engine.
+
+See [benchmarks and parity checks](bench/README.md) for measured changes against v0.1.0 and commands to reproduce them.
 
 ## Install
 

@@ -1,0 +1,1271 @@
+{
+  "manifest": {
+    "encoder": "videotoolbox",
+    "rounds": 5,
+    "fps": 30,
+    "executables": [
+      {
+        "version": "0.1.0",
+        "sha256": "d06d841b159893ee4966f0a23167fcaa95d9601240593e34d2bc3b08cb2d5fdc"
+      },
+      {
+        "version": "0.1.1",
+        "sha256": "b5b327ee2f31249ddd47aa61377671a06d91dc7856cabd1321782a6c57a1a531"
+      }
+    ],
+    "workloads": [
+      {
+        "name": "svg-titles",
+        "input": "examples/hello.svg.mjs",
+        "width": 1920,
+        "height": 1080,
+        "duration": 6,
+        "sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505"
+      },
+      {
+        "name": "svg-particles",
+        "input": "bench/particles.svg.mjs",
+        "width": 1280,
+        "height": 720,
+        "duration": 4,
+        "sha256": "08bce2f3f2d6aca98ead7c76bcd6c10d47ac03dfddfbc648e8bbf48171202989"
+      },
+      {
+        "name": "three-orbit",
+        "input": "examples/orbit.three.mjs",
+        "width": 1280,
+        "height": 720,
+        "duration": 6,
+        "sha256": "8b7800a0d2d401feb4700139f2d547fc32ea388e84941a1542063f4c67be6a31"
+      }
+    ],
+    "node": "v24.13.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M4 Pro",
+    "logical_cpus": 14,
+    "memory_bytes": 25769803776,
+    "ffmpeg": "ffmpeg version 9.0.2-https://www.martin-riedl.de Copyright (c) 2000-2026 the FFmpeg developers",
+    "baseline_commit": "46108ba5b9e5dded6df114ca11aeace814fb9afe",
+    "candidate_code_commit": "655297a6562ded655450101c3c2cd8e4ac09f741"
+  },
+  "summary": [
+    {
+      "workload": "svg-titles",
+      "baseline_seconds": 1.668880125,
+      "candidate_seconds": 1.150622292,
+      "reduction_percent": 31.05422763663148,
+      "speedup": 1.450415254947972,
+      "samples": [
+        [
+          1.662039917,
+          1.697186125,
+          1.663261083,
+          1.668880125,
+          1.683506667
+        ],
+        [
+          1.154121625,
+          1.150622292,
+          1.186216417,
+          1.139069041,
+          1.136419834
+        ]
+      ]
+    },
+    {
+      "workload": "svg-particles",
+      "baseline_seconds": 1.17441225,
+      "candidate_seconds": 0.636939875,
+      "reduction_percent": 45.76522213558314,
+      "speedup": 1.8438353384611066,
+      "samples": [
+        [
+          1.168608875,
+          1.17441225,
+          1.181486875,
+          1.17591975,
+          1.173967
+        ],
+        [
+          0.662404042,
+          0.655748833,
+          0.617331833,
+          0.623753208,
+          0.636939875
+        ]
+      ]
+    },
+    {
+      "workload": "three-orbit",
+      "baseline_seconds": 4.828048125,
+      "candidate_seconds": 2.120349333,
+      "reduction_percent": 56.08268024461749,
+      "speedup": 2.2770059866356935,
+      "samples": [
+        [
+          4.858287833,
+          4.782261041,
+          4.875286667,
+          4.828048125,
+          4.780989541
+        ],
+        [
+          2.320696375,
+          2.221444458,
+          2.101602125,
+          2.120349333,
+          2.063517708
+        ]
+      ]
+    }
+  ],
+  "records": [
+    {
+      "workload": "svg-titles",
+      "variant": 0,
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 1.680002708,
+      "setup_seconds": 0.041310334,
+      "processing_seconds": 1.062677125,
+      "reported_elapsed_seconds": 1.10404175,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 1,
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 1.386950875,
+      "setup_seconds": 0.05557725,
+      "processing_seconds": 1.071320083,
+      "reported_elapsed_seconds": 1.126941375,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 0,
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 1.2220265,
+      "setup_seconds": 0.043480292,
+      "processing_seconds": 0.584115125,
+      "reported_elapsed_seconds": 0.627650167,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 1,
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 0.651497167,
+      "setup_seconds": 0.048684875,
+      "processing_seconds": 0.567175417,
+      "reported_elapsed_seconds": 0.615909333,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 0,
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 4.993781417,
+      "setup_seconds": 0.361181708,
+      "processing_seconds": 4.048918708,
+      "reported_elapsed_seconds": 4.410147667,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 1,
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 2.122125,
+      "setup_seconds": 0.377523333,
+      "processing_seconds": 1.7072505,
+      "reported_elapsed_seconds": 2.084819166,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 0,
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 1.662039917,
+      "setup_seconds": 0.039563,
+      "processing_seconds": 1.04051475,
+      "reported_elapsed_seconds": 1.080125417,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 1,
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 1.154121625,
+      "setup_seconds": 0.054636584,
+      "processing_seconds": 1.066556459,
+      "reported_elapsed_seconds": 1.12125625,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 0,
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 1.168608875,
+      "setup_seconds": 0.04404825,
+      "processing_seconds": 0.535775833,
+      "reported_elapsed_seconds": 0.579874334,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 1,
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 0.662404042,
+      "setup_seconds": 0.051250167,
+      "processing_seconds": 0.575648459,
+      "reported_elapsed_seconds": 0.626952334,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 0,
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 4.858287833,
+      "setup_seconds": 0.369407875,
+      "processing_seconds": 3.891531583,
+      "reported_elapsed_seconds": 4.260989208,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 1,
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 2.320696375,
+      "setup_seconds": 0.39284125,
+      "processing_seconds": 1.8899667089999999,
+      "reported_elapsed_seconds": 2.282850083,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 1,
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 1.150622292,
+      "setup_seconds": 0.041558916,
+      "processing_seconds": 1.0737463329999999,
+      "reported_elapsed_seconds": 1.115356958,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 0,
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 1.697186125,
+      "setup_seconds": 0.041322334,
+      "processing_seconds": 1.069724917,
+      "reported_elapsed_seconds": 1.111098,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 1,
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 0.655748833,
+      "setup_seconds": 0.048631125,
+      "processing_seconds": 0.571348709,
+      "reported_elapsed_seconds": 0.620027083,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 0,
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 1.17441225,
+      "setup_seconds": 0.038914083,
+      "processing_seconds": 0.557555167,
+      "reported_elapsed_seconds": 0.596516333,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 1,
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 2.221444458,
+      "setup_seconds": 0.377755541,
+      "processing_seconds": 1.8095962920000002,
+      "reported_elapsed_seconds": 2.1873995,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 0,
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 4.782261041,
+      "setup_seconds": 0.366582792,
+      "processing_seconds": 3.812768459,
+      "reported_elapsed_seconds": 4.179397667,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 0,
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 1.663261083,
+      "setup_seconds": 0.048789667,
+      "processing_seconds": 1.031263917,
+      "reported_elapsed_seconds": 1.08010425,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 1,
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 1.186216417,
+      "setup_seconds": 0.045927292,
+      "processing_seconds": 1.106022625,
+      "reported_elapsed_seconds": 1.1519925,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 0,
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 1.181486875,
+      "setup_seconds": 0.039302,
+      "processing_seconds": 0.556531709,
+      "reported_elapsed_seconds": 0.595883708,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 1,
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 0.617331833,
+      "setup_seconds": 0.04491175,
+      "processing_seconds": 0.536215875,
+      "reported_elapsed_seconds": 0.581195,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 0,
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 4.875286667,
+      "setup_seconds": 0.372403083,
+      "processing_seconds": 3.89704475,
+      "reported_elapsed_seconds": 4.269489833,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 1,
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 2.101602125,
+      "setup_seconds": 0.385270375,
+      "processing_seconds": 1.6783389579999999,
+      "reported_elapsed_seconds": 2.063661333,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 1,
+      "warmup": false,
+      "round": 3,
+      "wall_seconds": 1.139069041,
+      "setup_seconds": 0.042864834,
+      "processing_seconds": 1.060905625,
+      "reported_elapsed_seconds": 1.103818667,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 0,
+      "warmup": false,
+      "round": 3,
+      "wall_seconds": 1.668880125,
+      "setup_seconds": 0.042389833,
+      "processing_seconds": 1.044939292,
+      "reported_elapsed_seconds": 1.087388666,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 1,
+      "warmup": false,
+      "round": 3,
+      "wall_seconds": 0.623753208,
+      "setup_seconds": 0.054364584,
+      "processing_seconds": 0.534322416,
+      "reported_elapsed_seconds": 0.588749959,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 0,
+      "warmup": false,
+      "round": 3,
+      "wall_seconds": 1.17591975,
+      "setup_seconds": 0.039383375,
+      "processing_seconds": 0.544633333,
+      "reported_elapsed_seconds": 0.584063584,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 1,
+      "warmup": false,
+      "round": 3,
+      "wall_seconds": 2.120349333,
+      "setup_seconds": 0.36160375,
+      "processing_seconds": 1.719834916,
+      "reported_elapsed_seconds": 2.08148075,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 0,
+      "warmup": false,
+      "round": 3,
+      "wall_seconds": 4.828048125,
+      "setup_seconds": 0.3514605,
+      "processing_seconds": 3.885498375,
+      "reported_elapsed_seconds": 4.237026875,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 0,
+      "warmup": false,
+      "round": 4,
+      "wall_seconds": 1.683506667,
+      "setup_seconds": 0.046063125,
+      "processing_seconds": 1.0437755,
+      "reported_elapsed_seconds": 1.089881667,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-titles",
+      "variant": 1,
+      "warmup": false,
+      "round": 4,
+      "wall_seconds": 1.136419834,
+      "setup_seconds": 0.044679583,
+      "processing_seconds": 1.057416625,
+      "reported_elapsed_seconds": 1.102135666,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 0,
+      "warmup": false,
+      "round": 4,
+      "wall_seconds": 1.173967,
+      "setup_seconds": 0.041130625,
+      "processing_seconds": 0.557153792,
+      "reported_elapsed_seconds": 0.598326834,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "svg-particles",
+      "variant": 1,
+      "warmup": false,
+      "round": 4,
+      "wall_seconds": 0.636939875,
+      "setup_seconds": 0.051164958,
+      "processing_seconds": 0.549099833,
+      "reported_elapsed_seconds": 0.600311333,
+      "frames": 120,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 4,
+        "fps": 30,
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 0,
+      "warmup": false,
+      "round": 4,
+      "wall_seconds": 4.780989541,
+      "setup_seconds": 0.353368334,
+      "processing_seconds": 3.83598475,
+      "reported_elapsed_seconds": 4.189401417,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "workload": "three-orbit",
+      "variant": 1,
+      "warmup": false,
+      "round": 4,
+      "wall_seconds": 2.063517708,
+      "setup_seconds": 0.361251333,
+      "processing_seconds": 1.669598041,
+      "reported_elapsed_seconds": 2.030896041,
+      "frames": 180,
+      "encoder": "h264_videotoolbox",
+      "video": {
+        "duration": 6,
+        "fps": 30,
+        "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
+        "height": 720,
+        "width": 1280
+      }
+    }
+  ],
+  "experiments": [
+    {
+      "name": "control",
+      "description": "Identical binaries; noise control",
+      "verdict": "control",
+      "summary": [
+        {
+          "workload": "svg-titles",
+          "baseline_seconds": 1.689759792,
+          "candidate_seconds": 1.7053236045,
+          "reduction_percent": -0.9210665666022688,
+          "speedup": 0.9908733964281441,
+          "samples": [
+            [
+              1.702458292,
+              1.677061292
+            ],
+            [
+              1.7216305,
+              1.689016709
+            ]
+          ]
+        },
+        {
+          "workload": "svg-particles",
+          "baseline_seconds": 1.1945530415,
+          "candidate_seconds": 1.17736875,
+          "reduction_percent": 1.4385540786386208,
+          "speedup": 1.0145955050191369,
+          "samples": [
+            [
+              1.195225125,
+              1.193880958
+            ],
+            [
+              1.18005475,
+              1.17468275
+            ]
+          ]
+        },
+        {
+          "workload": "three-orbit",
+          "baseline_seconds": 4.8635233545,
+          "candidate_seconds": 4.872001791500001,
+          "reduction_percent": -0.17432705431867923,
+          "speedup": 0.9982597631604337,
+          "samples": [
+            [
+              4.903967459,
+              4.82307925
+            ],
+            [
+              4.860621333,
+              4.88338225
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "cleanup",
+      "description": "Close runtime stdin before waiting",
+      "verdict": "kept",
+      "summary": [
+        {
+          "workload": "svg-titles",
+          "baseline_seconds": 1.692168708,
+          "candidate_seconds": 1.129563833,
+          "reduction_percent": 33.24756404844239,
+          "speedup": 1.4980726706748233,
+          "samples": [
+            [
+              1.675246083,
+              1.716859083,
+              1.692168708
+            ],
+            [
+              1.143620916,
+              1.118986167,
+              1.129563833
+            ]
+          ]
+        },
+        {
+          "workload": "svg-particles",
+          "baseline_seconds": 1.151720375,
+          "candidate_seconds": 0.6285735,
+          "reduction_percent": 45.42308066747538,
+          "speedup": 1.8322763765892136,
+          "samples": [
+            [
+              1.145886417,
+              1.151720375,
+              1.189771666
+            ],
+            [
+              0.6280065,
+              0.6285735,
+              0.639084
+            ]
+          ]
+        },
+        {
+          "workload": "three-orbit",
+          "baseline_seconds": 4.974733291,
+          "candidate_seconds": 4.486592833,
+          "reduction_percent": 9.812394543504787,
+          "speedup": 1.1087998122783966,
+          "samples": [
+            [
+              4.993479208,
+              4.974733291,
+              4.923892542
+            ],
+            [
+              4.486592833,
+              4.434333334,
+              4.508465458
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stream",
+      "description": "Consume incoming Three.js frames immediately",
+      "verdict": "rejected: near measurement noise",
+      "summary": [
+        {
+          "workload": "svg-titles",
+          "baseline_seconds": 1.149643625,
+          "candidate_seconds": 1.124808292,
+          "reduction_percent": 2.160263620824232,
+          "speedup": 1.022079614078805,
+          "samples": [
+            [
+              1.149643625,
+              1.130876875,
+              1.151964167
+            ],
+            [
+              1.119297708,
+              1.124808292,
+              1.132493416
+            ]
+          ]
+        },
+        {
+          "workload": "svg-particles",
+          "baseline_seconds": 0.629717916,
+          "candidate_seconds": 0.618404042,
+          "reduction_percent": 1.7966574735345575,
+          "speedup": 1.0182952782187669,
+          "samples": [
+            [
+              0.62077025,
+              0.629717916,
+              0.642105959
+            ],
+            [
+              0.618404042,
+              0.613780041,
+              0.665348792
+            ]
+          ]
+        },
+        {
+          "workload": "three-orbit",
+          "baseline_seconds": 4.493330875,
+          "candidate_seconds": 4.428046542,
+          "reduction_percent": 1.4529162177490451,
+          "speedup": 1.0147433710058777,
+          "samples": [
+            [
+              4.493330875,
+              4.448250541,
+              4.53249575
+            ],
+            [
+              4.428046542,
+              4.4489615,
+              4.371530625
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pipeline",
+      "description": "Generate the next batch on an extra thread",
+      "verdict": "rejected: small gain did not justify extra concurrency",
+      "summary": [
+        {
+          "workload": "svg-titles",
+          "baseline_seconds": 1.128287917,
+          "candidate_seconds": 1.139683917,
+          "reduction_percent": -1.0100258833136033,
+          "speedup": 0.990000736318191,
+          "samples": [
+            [
+              1.12109825,
+              1.1394315,
+              1.128287917
+            ],
+            [
+              1.143892041,
+              1.1359805,
+              1.139683917
+            ]
+          ]
+        },
+        {
+          "workload": "svg-particles",
+          "baseline_seconds": 0.626062542,
+          "candidate_seconds": 0.626933542,
+          "reduction_percent": -0.13912348073363834,
+          "speedup": 0.998610698037911,
+          "samples": [
+            [
+              0.626062542,
+              0.6214355,
+              0.630176375
+            ],
+            [
+              0.630218541,
+              0.626933542,
+              0.619971583
+            ]
+          ]
+        },
+        {
+          "workload": "three-orbit",
+          "baseline_seconds": 4.451697583,
+          "candidate_seconds": 4.359284458,
+          "reduction_percent": 2.075907522400078,
+          "speedup": 1.0211991499729747,
+          "samples": [
+            [
+              4.457451333,
+              4.403106667,
+              4.451697583
+            ],
+            [
+              4.35894725,
+              4.373621208,
+              4.359284458
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "xml",
+      "description": "Reuse validated SVG XML tree",
+      "verdict": "rejected: no measurable wall-time gain",
+      "summary": [
+        {
+          "workload": "svg-titles",
+          "baseline_seconds": 1.140295625,
+          "candidate_seconds": 1.138315875,
+          "reduction_percent": 0.17361725824389662,
+          "speedup": 1.0017391921201135,
+          "samples": [
+            [
+              1.160855583,
+              1.140295625,
+              1.128747792
+            ],
+            [
+              1.138315875,
+              1.155509166,
+              1.130406416
+            ]
+          ]
+        },
+        {
+          "workload": "svg-particles",
+          "baseline_seconds": 0.629815209,
+          "candidate_seconds": 0.628884458,
+          "reduction_percent": 0.14778160112673966,
+          "speedup": 1.001480003183669,
+          "samples": [
+            [
+              0.633076875,
+              0.629815209,
+              0.613106
+            ],
+            [
+              0.655625917,
+              0.628884458,
+              0.623132792
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "shared",
+      "description": "Move frame WebSocket into a shared worker",
+      "verdict": "kept",
+      "summary": [
+        {
+          "workload": "three-orbit",
+          "baseline_seconds": 4.295991375,
+          "candidate_seconds": 2.062749375,
+          "reduction_percent": 51.984322245060376,
+          "speedup": 2.0826530973982234,
+          "samples": [
+            [
+              4.281696958,
+              4.295991375,
+              4.356755583
+            ],
+            [
+              2.060057833,
+              2.062749375,
+              2.216356667
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "parity": {
+    "png_samples": 24,
+    "decoded_video_frames": 144,
+    "cases": [
+      {
+        "name": "svg-title",
+        "input": "examples/hello.svg.mjs",
+        "width": 1920,
+        "height": 1080,
+        "input_sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505",
+        "samples": [
+          {
+            "time": 0,
+            "rgba_checksum": "0,          0,          0,        1,  8294400, 0e865ba48a3679aae509d44f2aa46e66"
+          },
+          {
+            "time": 0.75,
+            "rgba_checksum": "0,          0,          0,        1,  8294400, d2c0167678bb3a96a3bd56219e913a04"
+          },
+          {
+            "time": 1.9166666666666667,
+            "rgba_checksum": "0,          0,          0,        1,  8294400, 75b322a30d7a79555388cb624ebd7acd"
+          },
+          {
+            "time": 2,
+            "rgba_checksum": "0,          0,          0,        1,  8294400, ee87927ee758d21e8c61ed95cdd4a434"
+          }
+        ],
+        "exact_decoded_video_frames": 24
+      },
+      {
+        "name": "svg-particles",
+        "input": "bench/particles.svg.mjs",
+        "width": 1280,
+        "height": 720,
+        "input_sha256": "08bce2f3f2d6aca98ead7c76bcd6c10d47ac03dfddfbc648e8bbf48171202989",
+        "samples": [
+          {
+            "time": 0,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, c4fbbe7b5ee9827447ec23283674e599"
+          },
+          {
+            "time": 0.75,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, 291cc62f494563eae4ecf7bcd86233fc"
+          },
+          {
+            "time": 1.9166666666666667,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, 404278d511789e54461fc0c4602250ee"
+          },
+          {
+            "time": 2,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, ba35d2540d5320202bd26bc78ced9eec"
+          }
+        ],
+        "exact_decoded_video_frames": 24
+      },
+      {
+        "name": "three-orbit",
+        "input": "examples/orbit.three.mjs",
+        "width": 1280,
+        "height": 720,
+        "input_sha256": "8b7800a0d2d401feb4700139f2d547fc32ea388e84941a1542063f4c67be6a31",
+        "samples": [
+          {
+            "time": 0,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, 2d2e36b2215e556e683e5ea0eea94c53"
+          },
+          {
+            "time": 0.75,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, f9a8c2472f3fd827f748a9fe2bcaaf5a"
+          },
+          {
+            "time": 1.9166666666666667,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, cd035a08c46b4820f78ad21cbe725291"
+          },
+          {
+            "time": 2,
+            "rgba_checksum": "0,          0,          0,        1,  3686400, 2d2e36b2215e556e683e5ea0eea94c53"
+          }
+        ],
+        "exact_decoded_video_frames": 24
+      },
+      {
+        "name": "three-software",
+        "input": "tests/fixtures/bands.three.mjs",
+        "width": 64,
+        "height": 64,
+        "software": true,
+        "input_sha256": "e4a460461d12e53048f2632cc8fb365ffebc8eec8dd72650901b195cb543a572",
+        "samples": [
+          {
+            "time": 0,
+            "rgba_checksum": "0,          0,          0,        1,    16384, eaf0ea72f8aa015bf0b772a619c149e9"
+          },
+          {
+            "time": 0.75,
+            "rgba_checksum": "0,          0,          0,        1,    16384, 9ec20a1d53f1f482e96f353629fe1f47"
+          },
+          {
+            "time": 1.9166666666666667,
+            "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+          },
+          {
+            "time": 2,
+            "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+          }
+        ],
+        "exact_decoded_video_frames": 24
+      },
+      {
+        "name": "three-custom-render",
+        "input": "tests/fixtures/custom-render.three.mjs",
+        "width": 64,
+        "height": 64,
+        "input_sha256": "4e6dde5b05880d84e08547d0a3cc08751a156f26dde2d6fdbc0cd71dd50862d8",
+        "samples": [
+          {
+            "time": 0,
+            "rgba_checksum": "0,          0,          0,        1,    16384, d7ed73390dad49c78fe4ccf64911aa6c"
+          },
+          {
+            "time": 0.75,
+            "rgba_checksum": "0,          0,          0,        1,    16384, 2d492a499ce144f52a37a0dd278d1041"
+          },
+          {
+            "time": 1.9166666666666667,
+            "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+          },
+          {
+            "time": 2,
+            "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+          }
+        ],
+        "exact_decoded_video_frames": 24
+      },
+      {
+        "name": "static-letterbox",
+        "input": "tests/fixtures/bands.svg",
+        "width": 96,
+        "height": 64,
+        "input_sha256": "e1f9813dbb2bf0a758dc0f09b26f57dd4cc2dc745932889d79bd39fac70f80ef",
+        "samples": [
+          {
+            "time": 0,
+            "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+          },
+          {
+            "time": 0.75,
+            "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+          },
+          {
+            "time": 1.9166666666666667,
+            "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+          },
+          {
+            "time": 2,
+            "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+          }
+        ],
+        "exact_decoded_video_frames": 24
+      }
+    ]
+  }
+}
