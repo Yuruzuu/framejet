@@ -192,8 +192,8 @@ export async function createSvgBrowser(configuration, video) {
           throw new Error(`SVG resources failed to load: ${failures.join('; ')}`);
         const output = await page.screenshot({ type: 'png', animations: 'allow', scale: 'css' });
         if (process.env.FRAMEJET_SVG_DIAGNOSTICS === '1') {
-          const state = await frame.evaluate(() =>
-            document.getAnimations().map((animation) => ({
+          const state = await frame.evaluate(() => ({
+            active: document.getAnimations().map((animation) => ({
               type: animation.constructor.name,
               target: animation.effect.target.id,
               time: animation.currentTime,
@@ -202,7 +202,23 @@ export async function createSvgBrowser(configuration, video) {
               duration: animation.effect.getTiming().duration,
               opacity: getComputedStyle(animation.effect.target).opacity,
             })),
-          );
+            controlled: window.framejetSvg.map(({ animation }) => ({
+              target: animation.effect.target.id,
+              time: animation.currentTime,
+              progress: animation.effect.getComputedTiming().progress,
+            })),
+            shapes: [...document.querySelectorAll('rect')].map((element) => ({
+              id: element.id,
+              fill: getComputedStyle(element).fill,
+              transform: getComputedStyle(element).transform,
+              opacity: getComputedStyle(element).opacity,
+              box: element.getBoundingClientRect().toJSON(),
+            })),
+            sheets: [...document.styleSheets].map((sheet) => ({
+              href: sheet.href,
+              disabled: sheet.disabled,
+            })),
+          }));
           console.error(`SVG capture at ${time}s: ${JSON.stringify(state)}`);
         }
         return output;

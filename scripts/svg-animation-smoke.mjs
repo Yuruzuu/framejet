@@ -129,6 +129,7 @@ async function checkRewind(
 }
 
 try {
+  if (process.env.CI) process.env.FRAMEJET_SVG_DIAGNOSTICS = '1';
   for (const time of [0, 1, 1.25, 2]) checkCombined(frame(fixture('animated.svg'), time), time);
   await checkRewind();
   console.log(
@@ -170,7 +171,7 @@ try {
   assert.deepEqual(
     pixel(frame(fixture('animated-external.svg'), 1), 36, 4),
     red,
-    'Relative external stylesheet',
+    `Relative external stylesheet: ${lastDiagnostics}`,
   );
   const letterbox = frame(fixture('animated.svg'), 1, ['--width', '192', '--height', '96']);
   assert.deepEqual(pixel(letterbox, 84, 4, 192), red, 'Proportional scaling and centering');
