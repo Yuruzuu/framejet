@@ -172,7 +172,20 @@ export async function createSvgBrowser(configuration, video) {
         }, time);
         if (failures.length)
           throw new Error(`SVG resources failed to load: ${failures.join('; ')}`);
-        return page.screenshot({ type: 'png', animations: 'allow', scale: 'css' });
+        const output = await page.screenshot({ type: 'png', animations: 'allow', scale: 'css' });
+        if (process.env.FRAMEJET_SVG_DIAGNOSTICS === '1') {
+          const state = await frame.evaluate(() => document.getAnimations().map(animation => ({
+            type:animation.constructor.name,
+            target:animation.effect.target.id,
+            time:animation.currentTime,
+            state:animation.playState,
+            progress:animation.effect.getComputedTiming().progress,
+            duration:animation.effect.getTiming().duration,
+            opacity:getComputedStyle(animation.effect.target).opacity,
+          })));
+          console.error(`SVG capture at ${time}s: ${JSON.stringify(state)}`);
+        }
+        return output;
       },
       close,
     };

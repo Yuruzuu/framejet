@@ -9,6 +9,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const executable = path.resolve(process.argv[2] || path.join(root, 'target/release/framejet'));
 const directory = mkdtempSync(path.join(tmpdir(), 'framejet-svg-'));
 let serial = 0;
+let lastDiagnostics = '';
 
 function run(program, arguments_) {
   const result = spawnSync(program, arguments_, {
@@ -17,6 +18,7 @@ function run(program, arguments_) {
     maxBuffer: 16 * 1024 * 1024,
   });
   assert.equal(result.status, 0, `${program}: ${result.error || result.stderr}`);
+  if (program === executable) lastDiagnostics = result.stderr.toString();
   return result.stdout;
 }
 const fixture = (name) => path.join(root, 'tests/fixtures', name);
@@ -175,17 +177,20 @@ try {
   assert.deepEqual(pixel(letterbox, 4, 4, 192), black, 'Letterbox background');
   console.log('CSS delays/repeats/pause, SMIL motion, relative CSS and output resizing passed');
 
+  if (process.env.CI) process.env.FRAMEJET_SVG_DIAGNOSTICS = '1';
   const shortStart = frame(fixture('animated-timing.svg'), 0);
+  const startDiagnostics = lastDiagnostics;
   const shortMiddle = frame(fixture('animated-timing.svg'), 0.0005);
+  const middleDiagnostics = lastDiagnostics;
   const shortEnd = frame(fixture('animated-timing.svg'), 1);
   assert.deepEqual(
     pixel(shortStart, 4, 4),
     black,
-    'Short animation resets even after navigation finishes',
+    `Short animation resets even after navigation finishes: ${startDiagnostics}`,
   );
   assert.ok(
     Math.abs(pixel(shortMiddle, 4, 4)[0] - 128) <= 1,
-    'Sub-frame CSS time is sampled exactly',
+    `Sub-frame CSS time is sampled exactly: ${pixel(shortMiddle, 4, 4)} ${middleDiagnostics}`,
   );
   assert.deepEqual(pixel(shortEnd, 4, 4), red);
   assert.deepEqual(pixel(shortStart, 36, 28), green, 'Negative CSS delay');
