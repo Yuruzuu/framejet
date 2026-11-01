@@ -32,6 +32,14 @@ impl SvgRenderer {
             for font in fonts {
                 let _ = database.load_font_file(font);
             }
+            // Otherwise every glyph opens and maps its font file again, which
+            // dominated text rendering and contended across rendering threads.
+            let faces: Vec<_> = database.faces().map(|face| face.id).collect();
+            for face in faces {
+                // SAFETY: font files are mapped read-only for this short-lived job, and
+                // a font replaced during a render is already undefined for usvg's own mappings.
+                let _ = unsafe { database.make_shared_face_data(face) };
+            }
             database
         });
         Ok(Self {
