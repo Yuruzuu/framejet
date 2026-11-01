@@ -126,6 +126,40 @@ pub fn probe_hardware(requested: Encoder) -> JoinHandle<bool> {
     })
 }
 
+/// A socket pair with large buffers moves frames with far fewer context switches
+/// than a pipe, which macOS limits to 64 KiB.
+#[cfg(unix)]
+fn frame_channel(command: &mut Command) -> Result<Box<dyn Write + Send>> {
+    use std::os::{
+        fd::{AsRawFd, OwnedFd},
+        unix::net::UnixStream,
+    };
+    let (reader, writer) = UnixStream::pair().context("Cannot open encoder input")?;
+    let size: libc::c_int = 4 * 1024 * 1024;
+    for (socket, option) in [(&writer, libc::SO_SNDBUF), (&reader, libc::SO_RCVBUF)] {
+        // Purely an optimization: the system default still works if this is refused.
+        // SAFETY: the descriptor is open and `size` outlives the call.
+        unsafe {
+            libc::setsockopt(
+                socket.as_raw_fd(),
+                libc::SOL_SOCKET,
+                option,
+                (&raw const size).cast(),
+                size_of::<libc::c_int>() as libc::socklen_t,
+            );
+        }
+    }
+    command.stdin(Stdio::from(OwnedFd::from(reader)));
+    Ok(Box::new(writer))
+}
+
+#[cfg(not(unix))]
+fn frame_channel(command: &mut Command) -> Result<Box<dyn Write + Send>> {
+    let (reader, writer) = std::io::pipe().context("Cannot open encoder input")?;
+    command.stdin(reader);
+    Ok(Box::new(writer))
+}
+
 pub struct VideoEncoder {
     child: Child,
     frames: Option<mpsc::SyncSender<Frame>>,
@@ -163,6 +197,7 @@ impl VideoEncoder {
         let temporary = temporary(output)?.into_temp_path();
         let errors = tempfile::tempfile()?;
         let mut command = Command::new("ffmpeg");
+        let mut input = frame_channel(&mut command)?;
         command.args([
             "-hide_banner",
             "-loglevel",
@@ -198,13 +233,11 @@ impl VideoEncoder {
                 "mp4",
             ])
             .arg(&temporary)
-            .stdin(Stdio::piped())
             .stdout(Stdio::null())
             .stderr(Stdio::from(errors.try_clone()?));
-        let mut child = command
+        let child = command
             .spawn()
             .context("FFmpeg is required; install ffmpeg and try again")?;
-        let mut input = child.stdin.take().context("Cannot open encoder input")?;
         // A separate writer lets rendering continue while FFmpeg consumes frames.
         let (frames, queued) = mpsc::sync_channel::<Frame>(queue);
         let writer = std::thread::spawn(move || {

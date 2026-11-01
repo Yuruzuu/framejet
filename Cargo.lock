@@ -457,6 +457,7 @@ dependencies = [
  "ctrlc",
  "dirs",
  "getrandom",
+ "libc",
  "mimalloc",
  "png",
  "rayon",

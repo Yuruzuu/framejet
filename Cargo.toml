@@ -14,6 +14,7 @@ clap = { version = "4", features = ["derive"] }
 ctrlc = "3"
 dirs = "6"
 getrandom = "0.4.3"
+libc = "0.2.191"
 mimalloc = { version = "0.1", default-features = false }
 png = "0.18"
 rayon = "1"

@@ -25,6 +25,7 @@ const workloads = [
   { name: 'svg-titles-4k', input: 'examples/hello.svg.mjs', width: 3840, height: 2160, duration: 3 },
   { name: 'svg-particles', input: 'bench/particles.svg.mjs', width: 1280, height: 720, duration: 4 },
   { name: 'three-orbit', input: 'examples/orbit.three.mjs', width: 1280, height: 720, duration: 6 },
+  { name: 'three-heavy', input: 'bench/heavy.three.mjs', width: 1920, height: 1080, duration: 4 },
   { name: 'static-svg', input: 'tests/fixtures/bands.svg', width: 1920, height: 1080, duration: 6 },
 ].filter(workload => !values.workload || values.workload.includes(workload.name));
 if (!workloads.length) throw new Error('No matching workloads');
