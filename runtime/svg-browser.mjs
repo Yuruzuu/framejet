@@ -30,10 +30,12 @@ export async function createSvgBrowser(configuration, video) {
   let markup = '';
   let loaded = false;
   let failures = [];
+  const requests = new Set();
   const server = createServer(async (request, response) => {
     try {
       const url = new URL(request.url, 'http://localhost');
       response.setHeader('Cache-Control', 'no-store');
+      response.setHeader('Content-Security-Policy', "script-src 'none'; object-src 'none'");
       if (url.pathname === '/') {
         response.setHeader('Content-Type', 'text/html');
         response.end(
@@ -76,12 +78,14 @@ export async function createSvgBrowser(configuration, video) {
     const page = await browser.newPage({
       viewport: { width: video.width, height: video.height },
       deviceScaleFactor: 1,
-      javaScriptEnabled: false,
       reducedMotion: 'no-preference',
     });
-    page.on('requestfailed', (request) =>
-      failures.push(`${request.url()}: ${request.failure()?.errorText}`),
-    );
+    page.on('request', (request) => requests.add(request));
+    page.on('requestfinished', (request) => requests.delete(request));
+    page.on('requestfailed', (request) => {
+      requests.delete(request);
+      failures.push(`${request.url()}: ${request.failure()?.errorText}`);
+    });
     page.on('response', (response) => {
       if (response.status() >= 400) failures.push(`${response.status()} ${response.url()}`);
     });
@@ -89,6 +93,17 @@ export async function createSvgBrowser(configuration, video) {
     await page.goto(origin);
     const element = await page.$('iframe');
     const frame = await element.contentFrame();
+    const settle = async () => {
+      await frame.evaluate(async () => {
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        await document.fonts.ready;
+      });
+      const deadline = Date.now() + 30000;
+      while (requests.size) {
+        if (Date.now() > deadline) throw new Error('SVG resources did not finish loading');
+        await new Promise((resolve) => setTimeout(resolve, 5));
+      }
+    };
 
     const prepare = async (source) => {
       markup = source;
@@ -99,6 +114,7 @@ export async function createSvgBrowser(configuration, video) {
         iframe.style.transform = 'none';
       }, configuration.svgSize || video);
       await frame.goto(`${origin}${scenePath}`);
+      await settle();
       const size = await frame.evaluate(() => {
         const svg = document.documentElement;
         if (!(svg instanceof SVGSVGElement))
@@ -126,6 +142,7 @@ export async function createSvgBrowser(configuration, video) {
           top: (video.height - size.height * scale) / 2,
         },
       );
+      await settle();
       await frame.evaluate(async () => {
         const svg = document.documentElement;
         svg.pauseAnimations();
@@ -170,19 +187,22 @@ export async function createSvgBrowser(configuration, video) {
           }
           document.documentElement.getBoundingClientRect();
         }, time);
+        await settle();
         if (failures.length)
           throw new Error(`SVG resources failed to load: ${failures.join('; ')}`);
         const output = await page.screenshot({ type: 'png', animations: 'allow', scale: 'css' });
         if (process.env.FRAMEJET_SVG_DIAGNOSTICS === '1') {
-          const state = await frame.evaluate(() => document.getAnimations().map(animation => ({
-            type:animation.constructor.name,
-            target:animation.effect.target.id,
-            time:animation.currentTime,
-            state:animation.playState,
-            progress:animation.effect.getComputedTiming().progress,
-            duration:animation.effect.getTiming().duration,
-            opacity:getComputedStyle(animation.effect.target).opacity,
-          })));
+          const state = await frame.evaluate(() =>
+            document.getAnimations().map((animation) => ({
+              type: animation.constructor.name,
+              target: animation.effect.target.id,
+              time: animation.currentTime,
+              state: animation.playState,
+              progress: animation.effect.getComputedTiming().progress,
+              duration: animation.effect.getTiming().duration,
+              opacity: getComputedStyle(animation.effect.target).opacity,
+            })),
+          );
           console.error(`SVG capture at ${time}s: ${JSON.stringify(state)}`);
         }
         return output;

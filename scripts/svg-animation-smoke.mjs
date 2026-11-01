@@ -282,6 +282,18 @@ try {
   assert.equal(existsSync(failure), false);
   console.log('Missing animated SVG resources fail without a partial output');
 
+  const eventHandler = path.join(directory, 'event-handler.svg');
+  writeFileSync(
+    eventHandler,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" onload="document.getElementById('target').setAttribute('fill','lime')"><style>@keyframes visible {from{opacity:1}to{opacity:1}} #target{animation:visible 1s both}</style><rect id="target" width="16" height="16" fill="red"/></svg>`,
+  );
+  assert.deepEqual(
+    pixel(frame(eventHandler, 0.5), 4, 4),
+    red,
+    'SVG event-handler scripts remain blocked',
+  );
+  console.log('SVG author scripts remain blocked while renderer animation frames run');
+
   const failingModule = path.join(directory, 'failing.svg.mjs');
   writeFileSync(
     failingModule,
