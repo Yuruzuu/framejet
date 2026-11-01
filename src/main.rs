@@ -1,0 +1,208 @@
+mod cli;
+mod output;
+mod runtime;
+mod source;
+mod svg;
+
+use anyhow::{Result, ensure};
+use clap::Parser;
+use cli::{Cli, Command};
+use source::{Sample, Source};
+use std::{
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
+    time::Instant,
+};
+
+fn run() -> Result<()> {
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let signal = cancelled.clone();
+    ctrlc::set_handler(move || signal.store(true, Ordering::Relaxed))?;
+    let started = Instant::now();
+    let command = Cli::parse().command;
+    let (source_arguments, output_arguments, extension) = match &command {
+        Command::Setup { skip_browser } => return runtime::setup(*skip_browser),
+        Command::Doctor => return runtime::doctor(),
+        Command::Render { source, output, .. } => (source, output, "mp4"),
+        Command::Frame { source, output, .. } | Command::ContactSheet { source, output, .. } => {
+            (source, output, "png")
+        }
+    };
+    runtime::ensure_extension(&output_arguments.output, extension)?;
+    output::validate_output(output_arguments, &source_arguments.input)?;
+    let mut source = Source::open(source_arguments, cancelled.clone())?;
+    let setup_seconds = started.elapsed().as_secs_f64();
+    let video = source.video.clone();
+    let processing = Instant::now();
+    let mut encoder_name = None;
+    let samples;
+    let sample_times;
+    let (output_width, output_height);
+
+    match command {
+        Command::Render {
+            ref output,
+            encoder,
+            crf,
+            bitrate,
+            ..
+        } => {
+            let mut encoder =
+                output::VideoEncoder::start(&video, &output.output, encoder, crf, bitrate)?;
+            encoder_name = Some(encoder.name);
+            let total = video.frames();
+            let batch_size = source.batch_size() as u64;
+            eprintln!(
+                "Rendering {total} frames through {} → {}",
+                source.backend, encoder.name
+            );
+            for start in (0..total).step_by(batch_size as usize) {
+                ensure!(!cancelled.load(Ordering::Relaxed), "Cancelled");
+                let batch: Vec<_> = (start..(start + batch_size).min(total))
+                    .map(|frame| Sample {
+                        time: frame as f64 / video.fps,
+                        frame,
+                    })
+                    .collect();
+                for pixels in source.frames(&batch)? {
+                    encoder.write(&pixels)?;
+                }
+                if start == 0
+                    || (start / batch_size).is_multiple_of(10)
+                    || start + batch_size >= total
+                {
+                    eprintln!("{}/{} frames", (start + batch_size).min(total), total);
+                }
+            }
+            encoder.finish(output)?;
+            samples = total;
+            sample_times = None;
+            (output_width, output_height) = (video.width, video.height);
+        }
+        Command::Frame {
+            ref output, time, ..
+        } => {
+            ensure!(
+                time.is_finite() && time >= 0.0 && time <= video.duration,
+                "Time must be between 0 and {} seconds",
+                video.duration
+            );
+            let sample = Sample {
+                time,
+                frame: (time * video.fps).floor() as u64,
+            };
+            let frames = source.frames(&[sample])?;
+            output::save_png(
+                &output.output,
+                output.force,
+                video.width,
+                video.height,
+                &frames[0],
+            )?;
+            samples = 1;
+            sample_times = Some(vec![time]);
+            (output_width, output_height) = (video.width, video.height);
+        }
+        Command::ContactSheet {
+            ref output,
+            count,
+            columns,
+            thumbnail_width,
+            ..
+        } => {
+            let columns = columns.min(count);
+            let rows = count.div_ceil(columns);
+            let thumbnail_height = ((video.height as f64 / video.width as f64)
+                * thumbnail_width as f64)
+                .round()
+                .max(1.0) as u32;
+            (output_width, output_height) = (columns * thumbnail_width, rows * thumbnail_height);
+            ensure!(
+                u64::from(output_width) * u64::from(output_height) <= 67_108_864,
+                "Contact sheet exceeds 64 megapixels; reduce --thumbnail-width or --count"
+            );
+            let mut sheet = vec![0; output_width as usize * output_height as usize * 4];
+            for pixel in sheet.as_chunks_mut::<4>().0 {
+                pixel[3] = 255;
+            }
+            let positions: Vec<_> = (0..count)
+                .map(|index| {
+                    let frame = if count == 1 {
+                        0
+                    } else {
+                        ((video.frames() - 1) as f64 * index as f64 / (count - 1) as f64).round()
+                            as u64
+                    };
+                    Sample {
+                        time: frame as f64 / video.fps,
+                        frame,
+                    }
+                })
+                .collect();
+            sample_times = Some(
+                positions
+                    .iter()
+                    .map(|sample| sample.time)
+                    .collect::<Vec<_>>(),
+            );
+            for (batch_index, batch) in positions.chunks(source.batch_size()).enumerate() {
+                let frames = source.frames(batch)?;
+                for (offset, pixels) in frames.iter().enumerate() {
+                    let index = batch_index * source.batch_size() + offset;
+                    let left = index as u32 % columns * thumbnail_width;
+                    let top = index as u32 / columns * thumbnail_height;
+                    let tile =
+                        resvg::tiny_skia::PixmapRef::from_bytes(pixels, video.width, video.height)
+                            .ok_or_else(|| anyhow::anyhow!("Invalid thumbnail pixels"))?;
+                    let mut canvas = resvg::tiny_skia::PixmapMut::from_bytes(
+                        &mut sheet,
+                        output_width,
+                        output_height,
+                    )
+                    .ok_or_else(|| anyhow::anyhow!("Invalid contact sheet dimensions"))?;
+                    let paint = resvg::tiny_skia::PixmapPaint {
+                        quality: resvg::tiny_skia::FilterQuality::Bilinear,
+                        ..Default::default()
+                    };
+                    let transform = resvg::tiny_skia::Transform::from_scale(
+                        thumbnail_width as f32 / video.width as f32,
+                        thumbnail_height as f32 / video.height as f32,
+                    )
+                    .post_translate(left as f32, top as f32);
+                    canvas.draw_pixmap(0, 0, tile, &paint, transform, None);
+                }
+            }
+            output::save_png(
+                &output.output,
+                output.force,
+                output_width,
+                output_height,
+                &sheet,
+            )?;
+            samples = u64::from(count);
+        }
+        _ => unreachable!(),
+    }
+    let processing_seconds = processing.elapsed().as_secs_f64();
+    let report = serde_json::json!({
+        "status":"ok", "version":env!("CARGO_PKG_VERSION"), "backend":source.backend,
+        "input":std::fs::canonicalize(&source_arguments.input)?, "output":std::fs::canonicalize(&output_arguments.output)?,
+        "video":video,"output_width":output_width,"output_height":output_height,
+        "frames":samples,"sample_times":sample_times,
+        "output_duration_seconds":encoder_name.map(|_| samples as f64 / video.fps),
+        "encoder":encoder_name,"setup_seconds":setup_seconds,
+        "processing_seconds":processing_seconds,"elapsed_seconds":started.elapsed().as_secs_f64(),
+        "processing_fps":samples as f64 / processing_seconds
+    });
+    output::report(output_arguments, &report)?;
+    Ok(())
+}
+
+fn main() {
+    if let Err(error) = run() {
+        eprintln!("framejet: {error:#}");
+        std::process::exit(1);
+    }
+}

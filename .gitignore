@@ -1,0 +1,5 @@
+/target/
+/runtime/node_modules/
+/artifacts/
+*.mp4
+.DS_Store
