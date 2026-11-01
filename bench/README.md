@@ -39,7 +39,7 @@ For clean motion graphics, `--encoder software` is the fastest choice and produc
 
 ## Output and failure checks
 
-Against v0.1.1: 28 lossless PNG samples and all 168 decoded frames from matched x264 videos match exactly, across SVG text and gradients, particles, both Three.js scenes, software rendering, custom render callbacks and letterboxed static SVG. Frames at an odd height also match. Ten tests pass locally. Both backend smoke checks pass, including failures after encoded batches: nonzero exit, no partial MP4 and an existing destination preserved. VideoToolbox files are not claimed to be byte-identical. Linux CI has not been run on this branch, and the non-Unix pipe fallback has not been compiled. Timings apply to this Mac and these workloads.
+Against v0.1.1: 28 lossless PNG samples and all 168 decoded frames from matched x264 videos match exactly, across SVG text and gradients, particles, both Three.js scenes, software rendering, custom render callbacks and letterboxed static SVG. Frames at an odd height also match. Ten tests pass. Both backend smoke checks pass, including failures after encoded batches: nonzero exit, no partial MP4 and an existing destination preserved. VideoToolbox files are not claimed to be byte-identical. Linux CI passed; it checks correctness, not equivalent speedups. The non-Unix pipe fallback has not been compiled. Timings apply to this Mac and these workloads.
 
 Upgrading requires `framejet setup`, because runtime dependencies changed.
 
