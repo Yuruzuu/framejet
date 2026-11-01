@@ -117,6 +117,15 @@ fn hardware_works() -> bool {
         .is_ok_and(|status| status.success())
 }
 
+/// Starts the encoder probe alongside runtime startup, which takes longer anyway.
+pub fn probe_hardware(requested: Encoder) -> JoinHandle<bool> {
+    std::thread::spawn(move || match requested {
+        Encoder::Software => false,
+        Encoder::Auto => cfg!(target_os = "macos") && hardware_works(),
+        Encoder::Videotoolbox => hardware_works(),
+    })
+}
+
 pub struct VideoEncoder {
     child: Child,
     frames: Option<mpsc::SyncSender<Frame>>,
@@ -131,6 +140,7 @@ impl VideoEncoder {
         video: &Video,
         output: &Path,
         requested: Encoder,
+        hardware: JoinHandle<bool>,
         crf: u8,
         bitrate: u32,
         queue: usize,
@@ -140,17 +150,11 @@ impl VideoEncoder {
             video.width.is_multiple_of(2) && video.height.is_multiple_of(2),
             "H.264 MP4 requires even width and height"
         );
-        let hardware = match requested {
-            Encoder::Software => false,
-            Encoder::Auto => cfg!(target_os = "macos") && hardware_works(),
-            Encoder::Videotoolbox => {
-                ensure!(
-                    hardware_works(),
-                    "VideoToolbox hardware encoding is unavailable; use --encoder software"
-                );
-                true
-            }
-        };
+        let hardware = hardware.join().unwrap_or(false);
+        ensure!(
+            hardware || requested != Encoder::Videotoolbox,
+            "VideoToolbox hardware encoding is unavailable; use --encoder software"
+        );
         let name = if hardware {
             "h264_videotoolbox"
         } else {

@@ -1,31 +1,76 @@
 use anyhow::{Context, Result, ensure};
 use resvg::{tiny_skia, usvg};
-use std::{path::Path, sync::Arc};
+use std::{
+    path::Path,
+    sync::{Arc, Mutex, OnceLock},
+};
+
+type FontLoader = std::thread::JoinHandle<usvg::fontdb::Database>;
 
 pub struct SvgRenderer {
-    options: usvg::Options<'static>,
+    /// Empty font database: enough for any SVG without text.
+    plain: usvg::Options<'static>,
+    resources: Option<std::path::PathBuf>,
+    loader: Mutex<Option<FontLoader>>,
+    /// Fonts take tens of milliseconds to scan, so only text waits for them.
+    typed: OnceLock<Result<usvg::Options<'static>, String>>,
 }
 
 impl SvgRenderer {
     pub fn new(input: &Path, fonts: &[std::path::PathBuf]) -> Result<Self> {
-        let mut options = usvg::Options {
-            resources_dir: input.parent().map(Path::to_path_buf),
-            ..Default::default()
-        };
-        let database = Arc::make_mut(&mut options.fontdb);
-        database.load_system_fonts();
+        let resources = input.parent().map(Path::to_path_buf);
+        // Report unusable --font files immediately, even if nothing draws text.
         for font in fonts {
-            database
+            usvg::fontdb::Database::new()
                 .load_font_file(font)
                 .with_context(|| format!("Cannot load font {}", font.display()))?;
         }
-        Ok(Self { options })
+        let fonts = fonts.to_vec();
+        let loader = std::thread::spawn(move || {
+            let mut database = usvg::fontdb::Database::new();
+            database.load_system_fonts();
+            for font in fonts {
+                let _ = database.load_font_file(font);
+            }
+            database
+        });
+        Ok(Self {
+            plain: usvg::Options {
+                resources_dir: resources.clone(),
+                ..Default::default()
+            },
+            resources,
+            loader: Mutex::new(Some(loader)),
+            typed: OnceLock::new(),
+        })
+    }
+
+    fn typed(&self) -> Result<&usvg::Options<'static>> {
+        self.typed
+            .get_or_init(|| {
+                let loader = self.loader.lock().ok().and_then(|mut loader| loader.take());
+                let database = loader
+                    .ok_or("Font loader is missing")?
+                    .join()
+                    .map_err(|_| "Font loading failed")?;
+                let mut options = usvg::Options {
+                    resources_dir: self.resources.clone(),
+                    ..Default::default()
+                };
+                options.fontdb = Arc::new(database);
+                Ok(options)
+            })
+            .as_ref()
+            .map_err(|error| anyhow::anyhow!("{error}"))
     }
 
     pub fn parse(&self, svg: &str) -> Result<usvg::Tree> {
         let document = roxmltree::Document::parse(svg).context("Invalid SVG XML")?;
+        // Embedded SVG images may also contain text.
+        let mut needs_fonts = false;
         for node in document.descendants().filter(|node| node.is_element()) {
             let name = node.tag_name().name();
+            needs_fonts |= matches!(name, "text" | "image");
             ensure!(
                 !matches!(
                     name,
@@ -45,7 +90,8 @@ impl SvgRenderer {
                 );
             }
         }
-        usvg::Tree::from_str(svg, &self.options).context("Cannot parse SVG")
+        let options = if needs_fonts { self.typed()? } else { &self.plain };
+        usvg::Tree::from_str(svg, options).context("Cannot parse SVG")
     }
 
     pub fn dimensions(&self, svg: &str) -> Result<(u32, u32)> {

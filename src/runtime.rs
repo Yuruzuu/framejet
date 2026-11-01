@@ -57,7 +57,7 @@ pub fn setup(skip_browser: bool) -> Result<()> {
         ("npm", vec!["ci", "--no-audit", "--no-fund"]),
         (
             "node",
-            vec!["node_modules/playwright/cli.js", "install", "chromium"],
+            vec!["node_modules/playwright-core/cli.js", "install", "chromium"],
         ),
     ] {
         if skip_browser && program == "node" {
@@ -265,7 +265,7 @@ pub fn version(program: &str, argument: &str) -> Option<String> {
 pub fn doctor() -> Result<()> {
     let directory = directory()?;
     let browser = Command::new("node").args(["--input-type=module", "-e",
-        "import {chromium} from 'playwright'; import fs from 'node:fs'; const p=chromium.executablePath(); console.log(JSON.stringify({installed:fs.existsSync(p),path:p}))"])
+        "import {chromium} from 'playwright-core'; import fs from 'node:fs'; const p=chromium.executablePath(); console.log(JSON.stringify({installed:fs.existsSync(p),path:p}))"])
         .current_dir(&directory).output().ok().filter(|output| output.status.success())
         .and_then(|output| serde_json::from_slice::<Value>(&output.stdout).ok());
     let node = version("node", "--version");

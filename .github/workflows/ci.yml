@@ -22,6 +22,6 @@ jobs:
       - run: cargo test --locked
       - run: cargo build --release --locked
       - run: npm ci --prefix runtime --no-audit --no-fund
-      - run: node runtime/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node runtime/node_modules/playwright-core/cli.js install --with-deps chromium
       - run: target/release/framejet setup --skip-browser
       - run: node scripts/smoke.mjs

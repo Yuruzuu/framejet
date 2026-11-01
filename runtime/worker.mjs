@@ -1,10 +1,13 @@
+import module from 'node:module';
 import { createInterface } from 'node:readline';
 import { once } from 'node:events';
 import { format } from 'node:util';
 import { readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
-import { createServer } from 'node:http';
+
+// Reuse V8 bytecode for the browser driver across jobs. Available in Node 22.1+.
+module.enableCompileCache?.(fileURLToPath(new URL('./compile-cache/', import.meta.url)));
 
 // stdout carries metadata, SVG markup and errors; animation logs belong on stderr.
 for (const method of ['log', 'info', 'debug', 'warn', 'error']) {
@@ -50,8 +53,9 @@ async function close() {
 
 async function startThree(configuration) {
   let chromium;
-  try { ({ chromium } = await import('playwright')); }
+  try { ({ chromium } = await import('playwright-core')); }
   catch { throw new Error('Three.js runtime is missing. Run: framejet setup'); }
+  const { createServer } = await import('node:http');
   const project = path.dirname(configuration.input);
   const dependencyRoot = fileURLToPath(new URL('./node_modules/', import.meta.url));
   const mime = { '.mjs': 'text/javascript', '.js': 'text/javascript', '.json': 'application/json',

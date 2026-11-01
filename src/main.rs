@@ -7,7 +7,7 @@ mod runtime;
 mod source;
 mod svg;
 
-use anyhow::{Result, ensure};
+use anyhow::{Context, Result, ensure};
 use clap::Parser;
 use cli::{Cli, Command};
 use source::{Sample, Source};
@@ -35,6 +35,10 @@ fn run() -> Result<()> {
     };
     runtime::ensure_extension(&output_arguments.output, extension)?;
     output::validate_output(output_arguments, &source_arguments.input)?;
+    let hardware = match &command {
+        Command::Render { encoder, .. } => Some(output::probe_hardware(*encoder)),
+        _ => None,
+    };
     let mut source = Source::open(source_arguments, cancelled.clone())?;
     let setup_seconds = started.elapsed().as_secs_f64();
     let video = source.video.clone();
@@ -57,6 +61,7 @@ fn run() -> Result<()> {
                 &video,
                 &output.output,
                 encoder,
+                hardware.context("Encoder probe is missing")?,
                 crf,
                 bitrate,
                 batch_size as usize,
