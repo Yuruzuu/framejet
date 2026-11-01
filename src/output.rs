@@ -170,6 +170,7 @@ pub struct VideoEncoder {
 }
 
 impl VideoEncoder {
+    #[allow(clippy::too_many_arguments)]
     pub fn start(
         video: &Video,
         output: &Path,

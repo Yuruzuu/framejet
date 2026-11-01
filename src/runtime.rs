@@ -80,6 +80,8 @@ pub fn setup(skip_browser: bool) -> Result<()> {
 
 /// Accepts one WebSocket holding the frame token and forwards its binary frames.
 /// The browser writes straight to Rust; Node only drives the page.
+// tungstenite's handshake callback fixes this error type.
+#[allow(clippy::result_large_err)]
 fn serve_frames(
     listener: TcpListener,
     token: String,
