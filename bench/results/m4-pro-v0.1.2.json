@@ -1,0 +1,2068 @@
+{
+ "baseline": "v0.1.1 (a8cdecc)",
+ "matched": {
+  "videotoolbox": {
+   "manifest": {
+    "encoder": "videotoolbox",
+    "rounds": 5,
+    "fps": 30,
+    "executables": [
+     {
+      "path": "/Users/yuruzuu/Desktop/framejet/artifacts/hillclimb-v2/baseline",
+      "sha256": "b5b327ee2f31249ddd47aa61377671a06d91dc7856cabd1321782a6c57a1a531"
+     },
+     {
+      "path": "/Users/yuruzuu/Desktop/framejet/artifacts/hillclimb-v2/final",
+      "sha256": "a8cf9e18c8d0e90ac692917a1c698bb91034d197c9247d8093d5a2fabc2aba95"
+     }
+    ],
+    "workloads": [
+     {
+      "name": "svg-titles",
+      "input": "examples/hello.svg.mjs",
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505"
+     },
+     {
+      "name": "svg-titles-4k",
+      "input": "examples/hello.svg.mjs",
+      "width": 3840,
+      "height": 2160,
+      "duration": 3,
+      "sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505"
+     },
+     {
+      "name": "svg-particles",
+      "input": "bench/particles.svg.mjs",
+      "width": 1280,
+      "height": 720,
+      "duration": 4,
+      "sha256": "08bce2f3f2d6aca98ead7c76bcd6c10d47ac03dfddfbc648e8bbf48171202989"
+     },
+     {
+      "name": "three-orbit",
+      "input": "examples/orbit.three.mjs",
+      "width": 1280,
+      "height": 720,
+      "duration": 6,
+      "sha256": "8b7800a0d2d401feb4700139f2d547fc32ea388e84941a1542063f4c67be6a31"
+     },
+     {
+      "name": "three-heavy",
+      "input": "bench/heavy.three.mjs",
+      "width": 1920,
+      "height": 1080,
+      "duration": 4,
+      "sha256": "556879cd958a130b07a3d6819ff7878ae3f00d79fd52aaae2c561f13e9d884d0"
+     },
+     {
+      "name": "static-svg",
+      "input": "tests/fixtures/bands.svg",
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "sha256": "e1f9813dbb2bf0a758dc0f09b26f57dd4cc2dc745932889d79bd39fac70f80ef"
+     }
+    ],
+    "node": "v24.13.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M4 Pro",
+    "logical_cpus": 14,
+    "memory_bytes": 25769803776,
+    "ffmpeg": "ffmpeg version 9.0.2-https://www.martin-riedl.de Copyright (c) 2000-2026 the FFmpeg developers"
+   },
+   "summary": [
+    {
+     "workload": "svg-titles",
+     "baseline_seconds": 1.124405875,
+     "candidate_seconds": 1.07919225,
+     "reduction_percent": 4.021112483070244,
+     "speedup": 1.0418958021612925,
+     "samples": [
+      [
+       1.124405875,
+       1.126231,
+       1.140461792,
+       1.116111708,
+       1.116011292
+      ],
+      [
+       1.078599625,
+       1.07919225,
+       1.0834845,
+       1.0719485,
+       1.085385542
+      ]
+     ]
+    },
+    {
+     "workload": "svg-titles-4k",
+     "baseline_seconds": 2.156072709,
+     "candidate_seconds": 1.811857584,
+     "reduction_percent": 15.964912665660947,
+     "speedup": 1.1899791286244936,
+     "samples": [
+      [
+       2.138450417,
+       2.156072709,
+       2.155987334,
+       2.181507458,
+       2.174237167
+      ],
+      [
+       1.804207084,
+       1.811857584,
+       1.81215825,
+       1.814560667,
+       1.810186125
+      ]
+     ]
+    },
+    {
+     "workload": "svg-particles",
+     "baseline_seconds": 0.6195715,
+     "candidate_seconds": 0.553424292,
+     "reduction_percent": 10.67628320540891,
+     "speedup": 1.1195234993407193,
+     "samples": [
+      [
+       0.6195715,
+       0.615483708,
+       0.635978667,
+       0.620045417,
+       0.6145045
+      ],
+      [
+       0.550939083,
+       0.549868166,
+       0.560237459,
+       0.559876083,
+       0.553424292
+      ]
+     ]
+    },
+    {
+     "workload": "three-orbit",
+     "baseline_seconds": 2.06944525,
+     "candidate_seconds": 0.905160792,
+     "reduction_percent": 56.260703587108665,
+     "speedup": 2.2862736303761597,
+     "samples": [
+      [
+       2.133568125,
+       2.060781708,
+       2.1065395,
+       2.06944525,
+       2.052745959
+      ],
+      [
+       0.923020417,
+       0.905160792,
+       0.889583459,
+       0.925748625,
+       0.887182792
+      ]
+     ]
+    },
+    {
+     "workload": "three-heavy",
+     "baseline_seconds": 3.032539667,
+     "candidate_seconds": 1.107725708,
+     "reduction_percent": 63.47201258225124,
+     "speedup": 2.7376268737820064,
+     "samples": [
+      [
+       3.051867166,
+       3.076476209,
+       3.032539667,
+       3.002765166,
+       2.943699
+      ],
+      [
+       1.118913875,
+       1.085714666,
+       1.107725708,
+       1.0786045,
+       1.186953292
+      ]
+     ]
+    },
+    {
+     "workload": "static-svg",
+     "baseline_seconds": 1.077705,
+     "candidate_seconds": 1.055081875,
+     "reduction_percent": 2.099194584788966,
+     "speedup": 1.0214420563333058,
+     "samples": [
+      [
+       1.091225,
+       1.057080166,
+       1.067973917,
+       1.077705,
+       1.090190084
+      ],
+      [
+       1.059828583,
+       1.055081875,
+       1.070417667,
+       1.049382125,
+       1.0545945
+      ]
+     ]
+    }
+   ],
+   "samples": [
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.113429958,
+     "setup_seconds": 0.0384555,
+     "processing_seconds": 1.040666917
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.075581916,
+     "setup_seconds": 0.027874083,
+     "processing_seconds": 1.032592125
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 2.152623625,
+     "setup_seconds": 0.046869625,
+     "processing_seconds": 2.069352625
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.81866475,
+     "setup_seconds": 0.02530575,
+     "processing_seconds": 1.770688792
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.62180525,
+     "setup_seconds": 0.041271708,
+     "processing_seconds": 0.549290083
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.544416458,
+     "setup_seconds": 0.0255845,
+     "processing_seconds": 0.509074583
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 2.269283375,
+     "setup_seconds": 0.568248292,
+     "processing_seconds": 1.666040583
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.920963292,
+     "setup_seconds": 0.345459792,
+     "processing_seconds": 0.53875225
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 2.982907167,
+     "setup_seconds": 0.367213417,
+     "processing_seconds": 2.579887709
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.105233083,
+     "setup_seconds": 0.331615417,
+     "processing_seconds": 0.717889458
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.049312292,
+     "setup_seconds": 0.010814,
+     "processing_seconds": 1.03316575
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.067355292,
+     "setup_seconds": 0.001298875,
+     "processing_seconds": 1.058879167
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.124405875,
+     "setup_seconds": 0.050337375,
+     "processing_seconds": 1.039316208
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.078599625,
+     "setup_seconds": 0.029511541,
+     "processing_seconds": 1.035421667
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 2.138450417,
+     "setup_seconds": 0.047234083,
+     "processing_seconds": 2.054109333
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.804207084,
+     "setup_seconds": 0.025426458,
+     "processing_seconds": 1.7604168329999998
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.6195715,
+     "setup_seconds": 0.045613625,
+     "processing_seconds": 0.540681333
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.550939083,
+     "setup_seconds": 0.02450225,
+     "processing_seconds": 0.516876
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 2.133568125,
+     "setup_seconds": 0.370165583,
+     "processing_seconds": 1.7298663749999998
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.923020417,
+     "setup_seconds": 0.327407459,
+     "processing_seconds": 0.554676167
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 3.051867166,
+     "setup_seconds": 0.412152,
+     "processing_seconds": 2.6074370829999998
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.118913875,
+     "setup_seconds": 0.328574875,
+     "processing_seconds": 0.723892666
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.091225,
+     "setup_seconds": 0.010973625,
+     "processing_seconds": 1.07456675
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.059828583,
+     "setup_seconds": 0.001404708,
+     "processing_seconds": 1.052399917
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.07919225,
+     "setup_seconds": 0.028334,
+     "processing_seconds": 1.038388166
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.126231,
+     "setup_seconds": 0.043178833,
+     "processing_seconds": 1.047133583
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.811857584,
+     "setup_seconds": 0.025682125,
+     "processing_seconds": 1.767453042
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 2.156072709,
+     "setup_seconds": 0.042661625,
+     "processing_seconds": 2.080174583
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.549868166,
+     "setup_seconds": 0.025034417,
+     "processing_seconds": 0.5157065
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.615483708,
+     "setup_seconds": 0.039517041,
+     "processing_seconds": 0.541079125
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.905160792,
+     "setup_seconds": 0.329287,
+     "processing_seconds": 0.542727333
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 2.060781708,
+     "setup_seconds": 0.356763334,
+     "processing_seconds": 1.669311459
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.085714666,
+     "setup_seconds": 0.326091709,
+     "processing_seconds": 0.716697458
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 3.076476209,
+     "setup_seconds": 0.368332708,
+     "processing_seconds": 2.672844667
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.055081875,
+     "setup_seconds": 0.001199166,
+     "processing_seconds": 1.048901584
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.057080166,
+     "setup_seconds": 0.008589958,
+     "processing_seconds": 1.043043083
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.140461792,
+     "setup_seconds": 0.043985084,
+     "processing_seconds": 1.061463417
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.0834845,
+     "setup_seconds": 0.025721291,
+     "processing_seconds": 1.047041417
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 2.155987334,
+     "setup_seconds": 0.039908417,
+     "processing_seconds": 2.080718709
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.81215825,
+     "setup_seconds": 0.025010042,
+     "processing_seconds": 1.76995725
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.635978667,
+     "setup_seconds": 0.0458085,
+     "processing_seconds": 0.559147542
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.560237459,
+     "setup_seconds": 0.024757958,
+     "processing_seconds": 0.52638475
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 2.1065395,
+     "setup_seconds": 0.368665834,
+     "processing_seconds": 1.706477209
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.889583459,
+     "setup_seconds": 0.3155765,
+     "processing_seconds": 0.537837333
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 3.032539667,
+     "setup_seconds": 0.367852292,
+     "processing_seconds": 2.629830791
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.107725708,
+     "setup_seconds": 0.3404785,
+     "processing_seconds": 0.718872542
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.067973917,
+     "setup_seconds": 0.012677208,
+     "processing_seconds": 1.04923025
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.070417667,
+     "setup_seconds": 0.001049541,
+     "processing_seconds": 1.064799333
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.0719485,
+     "setup_seconds": 0.0278405,
+     "processing_seconds": 1.033541125
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.116111708,
+     "setup_seconds": 0.038473709,
+     "processing_seconds": 1.043674833
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.814560667,
+     "setup_seconds": 0.025945375,
+     "processing_seconds": 1.770640792
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 2.181507458,
+     "setup_seconds": 0.0484885,
+     "processing_seconds": 2.097245875
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.559876083,
+     "setup_seconds": 0.025321208,
+     "processing_seconds": 0.524344208
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.620045417,
+     "setup_seconds": 0.041865541,
+     "processing_seconds": 0.542838833
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.925748625,
+     "setup_seconds": 0.347272292,
+     "processing_seconds": 0.543955167
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 2.06944525,
+     "setup_seconds": 0.354042166,
+     "processing_seconds": 1.680727375
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.0786045,
+     "setup_seconds": 0.323946041,
+     "processing_seconds": 0.711001208
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 3.002765166,
+     "setup_seconds": 0.363359958,
+     "processing_seconds": 2.604494709
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.049382125,
+     "setup_seconds": 0.001256708,
+     "processing_seconds": 1.042617625
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.077705,
+     "setup_seconds": 0.012043167,
+     "processing_seconds": 1.058371292
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.116011292,
+     "setup_seconds": 0.040133208,
+     "processing_seconds": 1.042995458
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.085385542,
+     "setup_seconds": 0.025082542,
+     "processing_seconds": 1.049521541
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 2.174237167,
+     "setup_seconds": 0.043585125,
+     "processing_seconds": 2.0950815
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.810186125,
+     "setup_seconds": 0.02442425,
+     "processing_seconds": 1.763465208
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.6145045,
+     "setup_seconds": 0.046098166,
+     "processing_seconds": 0.536192417
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.553424292,
+     "setup_seconds": 0.024464417,
+     "processing_seconds": 0.519136542
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 2.052745959,
+     "setup_seconds": 0.3582095,
+     "processing_seconds": 1.660785042
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.887182792,
+     "setup_seconds": 0.313571042,
+     "processing_seconds": 0.538935375
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 2.943699,
+     "setup_seconds": 0.357741708,
+     "processing_seconds": 2.551225875
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.186953292,
+     "setup_seconds": 0.344446541,
+     "processing_seconds": 0.748774417
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.090190084,
+     "setup_seconds": 0.011483584,
+     "processing_seconds": 1.073244542
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.0545945,
+     "setup_seconds": 0.0012185,
+     "processing_seconds": 1.047048625
+    }
+   ]
+  },
+  "software": {
+   "manifest": {
+    "encoder": "software",
+    "rounds": 5,
+    "fps": 30,
+    "executables": [
+     {
+      "path": "/Users/yuruzuu/Desktop/framejet/artifacts/hillclimb-v2/baseline",
+      "sha256": "b5b327ee2f31249ddd47aa61377671a06d91dc7856cabd1321782a6c57a1a531"
+     },
+     {
+      "path": "/Users/yuruzuu/Desktop/framejet/artifacts/hillclimb-v2/final",
+      "sha256": "a8cf9e18c8d0e90ac692917a1c698bb91034d197c9247d8093d5a2fabc2aba95"
+     }
+    ],
+    "workloads": [
+     {
+      "name": "svg-titles",
+      "input": "examples/hello.svg.mjs",
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505"
+     },
+     {
+      "name": "svg-titles-4k",
+      "input": "examples/hello.svg.mjs",
+      "width": 3840,
+      "height": 2160,
+      "duration": 3,
+      "sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505"
+     },
+     {
+      "name": "svg-particles",
+      "input": "bench/particles.svg.mjs",
+      "width": 1280,
+      "height": 720,
+      "duration": 4,
+      "sha256": "08bce2f3f2d6aca98ead7c76bcd6c10d47ac03dfddfbc648e8bbf48171202989"
+     },
+     {
+      "name": "three-orbit",
+      "input": "examples/orbit.three.mjs",
+      "width": 1280,
+      "height": 720,
+      "duration": 6,
+      "sha256": "8b7800a0d2d401feb4700139f2d547fc32ea388e84941a1542063f4c67be6a31"
+     },
+     {
+      "name": "three-heavy",
+      "input": "bench/heavy.three.mjs",
+      "width": 1920,
+      "height": 1080,
+      "duration": 4,
+      "sha256": "556879cd958a130b07a3d6819ff7878ae3f00d79fd52aaae2c561f13e9d884d0"
+     },
+     {
+      "name": "static-svg",
+      "input": "tests/fixtures/bands.svg",
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "sha256": "e1f9813dbb2bf0a758dc0f09b26f57dd4cc2dc745932889d79bd39fac70f80ef"
+     }
+    ],
+    "node": "v24.13.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M4 Pro",
+    "logical_cpus": 14,
+    "memory_bytes": 25769803776,
+    "ffmpeg": "ffmpeg version 9.0.2-https://www.martin-riedl.de Copyright (c) 2000-2026 the FFmpeg developers"
+   },
+   "summary": [
+    {
+     "workload": "svg-titles",
+     "baseline_seconds": 0.872733709,
+     "candidate_seconds": 0.477160917,
+     "reduction_percent": 45.32571481090804,
+     "speedup": 1.829013395495675,
+     "samples": [
+      [
+       0.863768833,
+       0.858983166,
+       0.97960275,
+       0.872733709,
+       0.928224584
+      ],
+      [
+       0.468800375,
+       0.477160917,
+       0.551842,
+       0.473029167,
+       0.525038125
+      ]
+     ]
+    },
+    {
+     "workload": "svg-titles-4k",
+     "baseline_seconds": 2.093203959,
+     "candidate_seconds": 1.000887291,
+     "reduction_percent": 52.18395767423636,
+     "speedup": 2.091348324453847,
+     "samples": [
+      [
+       2.081235667,
+       2.093203959,
+       2.152432708,
+       2.065885083,
+       2.159344291
+      ],
+      [
+       0.941881666,
+       1.004756,
+       1.07180675,
+       0.929777791,
+       1.000887291
+      ]
+     ]
+    },
+    {
+     "workload": "svg-particles",
+     "baseline_seconds": 0.453940708,
+     "candidate_seconds": 0.346834541,
+     "reduction_percent": 23.59474819341385,
+     "speedup": 1.308810554713465,
+     "samples": [
+      [
+       0.449006,
+       0.477420625,
+       0.553256083,
+       0.44909375,
+       0.453940708
+      ],
+      [
+       0.376756625,
+       0.346834541,
+       0.392548042,
+       0.339528167,
+       0.330418875
+      ]
+     ]
+    },
+    {
+     "workload": "three-orbit",
+     "baseline_seconds": 1.966199333,
+     "candidate_seconds": 0.793389875,
+     "reduction_percent": 59.64855334431141,
+     "speedup": 2.4782258949296523,
+     "samples": [
+      [
+       1.954380209,
+       1.966199333,
+       2.079599292,
+       1.937051875,
+       2.004475584
+      ],
+      [
+       0.74911375,
+       0.84288925,
+       0.793389875,
+       0.753801084,
+       0.811395667
+      ]
+     ]
+    },
+    {
+     "workload": "three-heavy",
+     "baseline_seconds": 3.096430292,
+     "candidate_seconds": 1.468967583,
+     "reduction_percent": 52.55932010498494,
+     "speedup": 2.1078955913215682,
+     "samples": [
+      [
+       3.191405708,
+       3.197878917,
+       3.085604208,
+       3.051955458,
+       3.096430292
+      ],
+      [
+       1.505195792,
+       1.580655333,
+       1.432151417,
+       1.462604292,
+       1.468967583
+      ]
+     ]
+    },
+    {
+     "workload": "static-svg",
+     "baseline_seconds": 0.48362675,
+     "candidate_seconds": 0.337609958,
+     "reduction_percent": 30.192042106852035,
+     "speedup": 1.4325014370577305,
+     "samples": [
+      [
+       0.467677625,
+       0.489722459,
+       0.471673041,
+       0.483641,
+       0.48362675
+      ],
+      [
+       0.337609958,
+       0.349143208,
+       0.324052375,
+       0.3369235,
+       0.369033792
+      ]
+     ]
+    }
+   ],
+   "samples": [
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.9143015,
+     "setup_seconds": 0.042563959,
+     "processing_seconds": 0.837268709
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.484299292,
+     "setup_seconds": 0.025508542,
+     "processing_seconds": 0.44740175
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 2.230062041,
+     "setup_seconds": 0.041954042,
+     "processing_seconds": 2.156982167
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.070363667,
+     "setup_seconds": 0.025108,
+     "processing_seconds": 1.023756667
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.486545042,
+     "setup_seconds": 0.04494375,
+     "processing_seconds": 0.406194292
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.366687875,
+     "setup_seconds": 0.025608958,
+     "processing_seconds": 0.331624167
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 2.203917542,
+     "setup_seconds": 0.595649958,
+     "processing_seconds": 1.5734855840000002
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.794890083,
+     "setup_seconds": 0.36784075,
+     "processing_seconds": 0.38982075
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 3.021262834,
+     "setup_seconds": 0.362393084,
+     "processing_seconds": 2.624005334
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 1.433937167,
+     "setup_seconds": 0.332706625,
+     "processing_seconds": 1.05824875
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.472217958,
+     "setup_seconds": 0.010948125,
+     "processing_seconds": 0.4564005
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": true,
+     "round": -1,
+     "wall_seconds": 0.341482375,
+     "setup_seconds": 0.000945208,
+     "processing_seconds": 0.335825125
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.863768833,
+     "setup_seconds": 0.039464667,
+     "processing_seconds": 0.789544334
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.468800375,
+     "setup_seconds": 0.023373542,
+     "processing_seconds": 0.4351225
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 2.081235667,
+     "setup_seconds": 0.040661959,
+     "processing_seconds": 2.004695
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.941881666,
+     "setup_seconds": 0.026510041,
+     "processing_seconds": 0.896141
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.449006,
+     "setup_seconds": 0.039349667,
+     "processing_seconds": 0.374450792
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.376756625,
+     "setup_seconds": 0.033451625,
+     "processing_seconds": 0.332779541
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.954380209,
+     "setup_seconds": 0.386166459,
+     "processing_seconds": 1.5334528330000001
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.74911375,
+     "setup_seconds": 0.32686025,
+     "processing_seconds": 0.390433125
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 3.191405708,
+     "setup_seconds": 0.367603833,
+     "processing_seconds": 2.789751625
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 1.505195792,
+     "setup_seconds": 0.332758792,
+     "processing_seconds": 1.11374075
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.467677625,
+     "setup_seconds": 0.01100275,
+     "processing_seconds": 0.451932417
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 0,
+     "wall_seconds": 0.337609958,
+     "setup_seconds": 0.00086675,
+     "processing_seconds": 0.332096917
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.477160917,
+     "setup_seconds": 0.027848166,
+     "processing_seconds": 0.439060958
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.858983166,
+     "setup_seconds": 0.038098208,
+     "processing_seconds": 0.786252709
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.004756,
+     "setup_seconds": 0.023543417,
+     "processing_seconds": 0.966211875
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 2.093203959,
+     "setup_seconds": 0.041772,
+     "processing_seconds": 2.020485708
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.346834541,
+     "setup_seconds": 0.02541825,
+     "processing_seconds": 0.312239292
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.477420625,
+     "setup_seconds": 0.040803917,
+     "processing_seconds": 0.401874375
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.84288925,
+     "setup_seconds": 0.355004,
+     "processing_seconds": 0.449219
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.966199333,
+     "setup_seconds": 0.389911708,
+     "processing_seconds": 1.541276125
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 1.580655333,
+     "setup_seconds": 0.338467042,
+     "processing_seconds": 1.1756677500000001
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 3.197878917,
+     "setup_seconds": 0.438617667,
+     "processing_seconds": 2.723238208
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.349143208,
+     "setup_seconds": 0.00113575,
+     "processing_seconds": 0.343227084
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 1,
+     "wall_seconds": 0.489722459,
+     "setup_seconds": 0.0089255,
+     "processing_seconds": 0.475845083
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.97960275,
+     "setup_seconds": 0.046131584,
+     "processing_seconds": 0.898303667
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.551842,
+     "setup_seconds": 0.028086791,
+     "processing_seconds": 0.512095625
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 2.152432708,
+     "setup_seconds": 0.051036792,
+     "processing_seconds": 2.0658675
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.07180675,
+     "setup_seconds": 0.026661041,
+     "processing_seconds": 1.021654875
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.553256083,
+     "setup_seconds": 0.054306916,
+     "processing_seconds": 0.464747541
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.392548042,
+     "setup_seconds": 0.029349834,
+     "processing_seconds": 0.353117875
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 2.079599292,
+     "setup_seconds": 0.457404084,
+     "processing_seconds": 1.58932325
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.793389875,
+     "setup_seconds": 0.362569208,
+     "processing_seconds": 0.397369625
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 3.085604208,
+     "setup_seconds": 0.381466875,
+     "processing_seconds": 2.669268041
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 1.432151417,
+     "setup_seconds": 0.330947625,
+     "processing_seconds": 1.054051625
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.471673041,
+     "setup_seconds": 0.011245,
+     "processing_seconds": 0.455484875
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 2,
+     "wall_seconds": 0.324052375,
+     "setup_seconds": 0.001004,
+     "processing_seconds": 0.318330709
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.473029167,
+     "setup_seconds": 0.024059208,
+     "processing_seconds": 0.438874709
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.872733709,
+     "setup_seconds": 0.0397175,
+     "processing_seconds": 0.798002625
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.929777791,
+     "setup_seconds": 0.023593042,
+     "processing_seconds": 0.890309208
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 2.065885083,
+     "setup_seconds": 0.041776375,
+     "processing_seconds": 1.9886055
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.339528167,
+     "setup_seconds": 0.024299625,
+     "processing_seconds": 0.306366709
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.44909375,
+     "setup_seconds": 0.040808166,
+     "processing_seconds": 0.373417167
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.753801084,
+     "setup_seconds": 0.33235825,
+     "processing_seconds": 0.38644225
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.937051875,
+     "setup_seconds": 0.376337375,
+     "processing_seconds": 1.525913291
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 1.462604292,
+     "setup_seconds": 0.345523292,
+     "processing_seconds": 1.072983417
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 3.051955458,
+     "setup_seconds": 0.366763625,
+     "processing_seconds": 2.649986541
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.3369235,
+     "setup_seconds": 0.001061,
+     "processing_seconds": 0.330853833
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 3,
+     "wall_seconds": 0.483641,
+     "setup_seconds": 0.007358041,
+     "processing_seconds": 0.471304583
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.928224584,
+     "setup_seconds": 0.039902041,
+     "processing_seconds": 0.853668041
+    },
+    {
+     "workload": "svg-titles",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.525038125,
+     "setup_seconds": 0.02509425,
+     "processing_seconds": 0.48892575
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 2.159344291,
+     "setup_seconds": 0.040290208,
+     "processing_seconds": 2.084918833
+    },
+    {
+     "workload": "svg-titles-4k",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.000887291,
+     "setup_seconds": 0.027485458,
+     "processing_seconds": 0.955871333
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.453940708,
+     "setup_seconds": 0.041298458,
+     "processing_seconds": 0.377653541
+    },
+    {
+     "workload": "svg-particles",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.330418875,
+     "setup_seconds": 0.024124,
+     "processing_seconds": 0.297489167
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 2.004475584,
+     "setup_seconds": 0.372348416,
+     "processing_seconds": 1.597784042
+    },
+    {
+     "workload": "three-orbit",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.811395667,
+     "setup_seconds": 0.368472416,
+     "processing_seconds": 0.404738583
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 3.096430292,
+     "setup_seconds": 0.365852375,
+     "processing_seconds": 2.699300708
+    },
+    {
+     "workload": "three-heavy",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 1.468967583,
+     "setup_seconds": 0.334349625,
+     "processing_seconds": 1.085964458
+    },
+    {
+     "workload": "static-svg",
+     "variant": 0,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.48362675,
+     "setup_seconds": 0.011247458,
+     "processing_seconds": 0.4667735
+    },
+    {
+     "workload": "static-svg",
+     "variant": 1,
+     "warmup": false,
+     "round": 4,
+     "wall_seconds": 0.369033792,
+     "setup_seconds": 0.000948,
+     "processing_seconds": 0.363227208
+    }
+   ]
+  }
+ },
+ "control": [
+  {
+   "workload": "svg-titles",
+   "baseline_seconds": 1.104867291,
+   "candidate_seconds": 1.107120958,
+   "reduction_percent": -0.20397626197807828,
+   "speedup": 0.9979643895423392,
+   "samples": [
+    [
+     1.077074458,
+     1.115402833,
+     1.104867291
+    ],
+    [
+     1.116713708,
+     1.107120958,
+     1.087459667
+    ]
+   ]
+  },
+  {
+   "workload": "svg-titles-4k",
+   "baseline_seconds": 1.833920458,
+   "candidate_seconds": 1.826877833,
+   "reduction_percent": 0.3840201994191328,
+   "speedup": 1.0038550059959044,
+   "samples": [
+    [
+     1.843821,
+     1.833920458,
+     1.809060542
+    ],
+    [
+     1.823458583,
+     1.850285041,
+     1.826877833
+    ]
+   ]
+  },
+  {
+   "workload": "svg-particles",
+   "baseline_seconds": 0.565508333,
+   "candidate_seconds": 0.564714417,
+   "reduction_percent": 0.1403897968732526,
+   "speedup": 1.001405871669113,
+   "samples": [
+    [
+     0.565508333,
+     0.571307625,
+     0.558402625
+    ],
+    [
+     0.564714417,
+     0.57743825,
+     0.555225708
+    ]
+   ]
+  },
+  {
+   "workload": "three-orbit",
+   "baseline_seconds": 0.911999708,
+   "candidate_seconds": 0.913287833,
+   "reduction_percent": -0.14124182153796294,
+   "speedup": 0.9985895738961409,
+   "samples": [
+    [
+     0.910455042,
+     0.930412875,
+     0.911999708
+    ],
+    [
+     0.913287833,
+     0.925925833,
+     0.912471708
+    ]
+   ]
+  },
+  {
+   "workload": "three-heavy",
+   "baseline_seconds": 1.1206635,
+   "candidate_seconds": 1.117918541,
+   "reduction_percent": 0.24494051961181373,
+   "speedup": 1.002455419513433,
+   "samples": [
+    [
+     1.123041,
+     1.115533667,
+     1.1206635
+    ],
+    [
+     1.106043917,
+     1.120200375,
+     1.117918541
+    ]
+   ]
+  },
+  {
+   "workload": "static-svg",
+   "baseline_seconds": 1.082084417,
+   "candidate_seconds": 1.078217125,
+   "reduction_percent": 0.35739281882660734,
+   "speedup": 1.0035867469643462,
+   "samples": [
+    [
+     1.088725208,
+     1.082084417,
+     1.0596065
+    ],
+    [
+     1.084177375,
+     1.078217125,
+     1.064010583
+    ]
+   ]
+  }
+ ],
+ "parity": {
+  "executables": [
+   {
+    "path": "/Users/yuruzuu/Desktop/framejet/artifacts/hillclimb-v2/baseline",
+    "sha256": "b5b327ee2f31249ddd47aa61377671a06d91dc7856cabd1321782a6c57a1a531"
+   },
+   {
+    "path": "/Users/yuruzuu/Desktop/framejet/artifacts/hillclimb-v2/final",
+    "sha256": "a8cf9e18c8d0e90ac692917a1c698bb91034d197c9247d8093d5a2fabc2aba95"
+   }
+  ],
+  "cases": [
+   {
+    "name": "svg-title",
+    "input": "examples/hello.svg.mjs",
+    "width": 1920,
+    "height": 1080,
+    "input_sha256": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,  8294400, 0e865ba48a3679aae509d44f2aa46e66"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,  8294400, d2c0167678bb3a96a3bd56219e913a04"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,  8294400, 75b322a30d7a79555388cb624ebd7acd"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,  8294400, ee87927ee758d21e8c61ed95cdd4a434"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   },
+   {
+    "name": "svg-particles",
+    "input": "bench/particles.svg.mjs",
+    "width": 1280,
+    "height": 720,
+    "input_sha256": "08bce2f3f2d6aca98ead7c76bcd6c10d47ac03dfddfbc648e8bbf48171202989",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, c4fbbe7b5ee9827447ec23283674e599"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, 291cc62f494563eae4ecf7bcd86233fc"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, 404278d511789e54461fc0c4602250ee"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, ba35d2540d5320202bd26bc78ced9eec"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   },
+   {
+    "name": "three-orbit",
+    "input": "examples/orbit.three.mjs",
+    "width": 1280,
+    "height": 720,
+    "input_sha256": "8b7800a0d2d401feb4700139f2d547fc32ea388e84941a1542063f4c67be6a31",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, 2d2e36b2215e556e683e5ea0eea94c53"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, f9a8c2472f3fd827f748a9fe2bcaaf5a"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, cd035a08c46b4820f78ad21cbe725291"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, 2d2e36b2215e556e683e5ea0eea94c53"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   },
+   {
+    "name": "three-heavy",
+    "input": "bench/heavy.three.mjs",
+    "width": 1280,
+    "height": 720,
+    "input_sha256": "556879cd958a130b07a3d6819ff7878ae3f00d79fd52aaae2c561f13e9d884d0",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, a538160f591ec27aab298f51ca80a702"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, 924fb02c31ba3bcef11ad13cb9559083"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, b299ff678ce7bdc5b7d733ee2355d75b"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,  3686400, c62eb5451959ff8af1bb6abc338d201f"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   },
+   {
+    "name": "three-software",
+    "input": "tests/fixtures/bands.three.mjs",
+    "width": 64,
+    "height": 64,
+    "software": true,
+    "input_sha256": "e4a460461d12e53048f2632cc8fb365ffebc8eec8dd72650901b195cb543a572",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,    16384, eaf0ea72f8aa015bf0b772a619c149e9"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,    16384, 9ec20a1d53f1f482e96f353629fe1f47"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   },
+   {
+    "name": "three-custom-render",
+    "input": "tests/fixtures/custom-render.three.mjs",
+    "width": 64,
+    "height": 64,
+    "input_sha256": "4e6dde5b05880d84e08547d0a3cc08751a156f26dde2d6fdbc0cd71dd50862d8",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,    16384, d7ed73390dad49c78fe4ccf64911aa6c"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,    16384, 2d492a499ce144f52a37a0dd278d1041"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,    16384, bf955898cab88eb8fa3c4b24e37b63bf"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   },
+   {
+    "name": "static-letterbox",
+    "input": "tests/fixtures/bands.svg",
+    "width": 96,
+    "height": 64,
+    "input_sha256": "e1f9813dbb2bf0a758dc0f09b26f57dd4cc2dc745932889d79bd39fac70f80ef",
+    "samples": [
+     {
+      "time": 0,
+      "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+     },
+     {
+      "time": 0.75,
+      "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+     },
+     {
+      "time": 1.9166666666666667,
+      "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+     },
+     {
+      "time": 2,
+      "rgba_checksum": "0,          0,          0,        1,    24576, 7e3232080bfee113f20ea66609e63f89"
+     }
+    ],
+    "exact_decoded_video_frames": 24
+   }
+  ]
+ },
+ "rejected": [
+  {
+   "name": "reuse parsed XML tree",
+   "result": "-1.6% and -1.4% on SVG titles/particles"
+  },
+  {
+   "name": "VideoToolbox prio_speed, realtime, power_efficient 0, bf 0, baseline profile",
+   "result": "no encoder-only gain beyond noise; realtime was slower"
+  },
+  {
+   "name": "parallel VideoToolbox sessions",
+   "result": "one engine: 192-217 fps total at 1080p for 1-8 sessions"
+  },
+  {
+   "name": "faster swscale settings",
+   "result": "no change; the encoder engine is the limit"
+  },
+  {
+   "name": "auto encoder switching to x264",
+   "result": "typical clips 1.6-2.7x faster encoding and 4-7x smaller; worst-case noise 3-6x slower and 14-36x larger; heavy Three.js scene slower than VideoToolbox"
+  }
+ ]
+}

@@ -3,8 +3,8 @@
 A Rust CLI that turns SVG and Three.js animations into MP4 videos, PNG frames, and contact sheets.
 
 - **SVG:** JavaScript calculates each frame's SVG; Rust rasterizes it in parallel with [resvg](https://github.com/linebender/resvg). Static `.svg` inputs work too.
-- **Three.js:** one persistent Chromium session loads the scene once and transfers raw WebGL pixels over a binary WebSocket in a shared worker, avoiding duplicated DevTools frame traffic. No per-frame screenshots or intermediate PNG files.
-- **Video:** frames stream to FFmpeg with bounded batches. On macOS, `auto` probes VideoToolbox hardware encoding and uses x264 if unavailable.
+- **Three.js:** one persistent Chromium session loads the scene once. Fenced GPU readback and a binary WebSocket in a shared worker send raw pixels directly to the CLI, with a few frames in flight, avoiding PNG capture and Node in the data path.
+- **Video:** frames stream to FFmpeg with bounded batches. On macOS, `auto` probes VideoToolbox hardware encoding and uses x264 if unavailable. A dedicated writer thread keeps FFmpeg fed while the next batch renders.
 - **Agents:** exact frame times, JSON results on stdout, progress/errors on stderr, and review images before a full export.
 
 Inspired by [FFrames](https://github.com/dmtrKovalenko/fframes). Framejet uses its own JavaScript animation adapters; it does not import FFrames projects or replace Three.js with a native 3D engine.
@@ -52,7 +52,7 @@ Other options:
 - `--font ./Brand.ttf` loads an additional SVG font; repeat for multiple fonts.
 - `--threads 4` controls native SVG rendering parallelism.
 - `--software-rendering` forces Three.js to use SwiftShader. macOS requests Metal by default; other systems use Chromium's default backend.
-- `render --encoder software --crf 18` selects x264. `--encoder videotoolbox --bitrate 12` requires Apple's hardware encoder and sets Mbps. Hardware/software quality settings are different.
+- `render --encoder software --crf 18` selects x264. `--encoder videotoolbox --bitrate 12` requires Apple's hardware encoder and sets Mbps. Hardware/software quality settings are different. VideoToolbox has one encode engine, so it is often not the fastest choice: x264 is usually faster and much smaller for clean motion graphics, while VideoToolbox stays faster for heavy or noisy content. See [the benchmarks](bench/README.md).
 - `--timeout 120` limits the wait for each JavaScript runtime response.
 - `--force` explicitly replaces an existing output or report. A failed render leaves an existing output intact.
 

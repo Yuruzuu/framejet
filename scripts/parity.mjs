@@ -25,6 +25,7 @@ const cases = [
   { name: 'svg-title', input: 'examples/hello.svg.mjs', width: 1920, height: 1080 },
   { name: 'svg-particles', input: 'bench/particles.svg.mjs', width: 1280, height: 720 },
   { name: 'three-orbit', input: 'examples/orbit.three.mjs', width: 1280, height: 720 },
+  { name: 'three-heavy', input: 'bench/heavy.three.mjs', width: 1280, height: 720 },
   { name: 'three-software', input: 'tests/fixtures/bands.three.mjs', width: 64, height: 64, software: true },
   { name: 'three-custom-render', input: 'tests/fixtures/custom-render.three.mjs', width: 64, height: 64 },
   { name: 'static-letterbox', input: 'tests/fixtures/bands.svg', width: 96, height: 64 },

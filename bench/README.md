@@ -1,4 +1,49 @@
-# Performance: v0.1.0 → v0.1.1
+# Performance: v0.1.1 → v0.1.2
+
+Median **whole-command wall times** on an Apple M4 Pro (14 logical CPUs, 24 GiB RAM), Node 24.13.1, FFmpeg 9.0.2. Each workload had one warmup per binary and five paired repetitions alternating order, against the frozen v0.1.1 binary. An identical-binary control differed by at most 0.4%. The machine was in normal use, so runs waited for a quiet CPU first.
+
+| Workload | Frames / resolution | VideoToolbox: v0.1.1 → v0.1.2 | Speedup | x264: v0.1.1 → v0.1.2 | Speedup |
+| --- | --- | ---: | ---: | ---: | ---: |
+| SVG titles | 180 / 1920×1080 | 1.124 → 1.079 s | 1.04× | 0.873 → 0.477 s | 1.83× |
+| SVG titles 4K | 90 / 3840×2160 | 2.156 → 1.812 s | 1.19× | 2.093 → 1.001 s | 2.09× |
+| SVG particles | 120 / 1280×720 | 0.620 → 0.553 s | 1.12× | 0.454 → 0.347 s | 1.31× |
+| Static SVG | 180 / 1920×1080 | 1.078 → 1.055 s | 1.02× | 0.484 → 0.338 s | 1.43× |
+| Three.js orbit | 180 / 1280×720 | 2.069 → 0.905 s | 2.29× | 1.966 → 0.793 s | 2.48× |
+| Three.js heavy | 120 / 1920×1080 | 3.033 → 1.108 s | 2.74× | 3.096 → 1.469 s | 2.11× |
+
+Full samples, parity results and rejected candidates are in [results/m4-pro-v0.1.2.json](results/m4-pro-v0.1.2.json).
+
+## What limits speed now
+
+VideoToolbox has one encode engine on this machine: about 216 fps at 1080p in total, however many sessions run. SVG on VideoToolbox barely improves because it was already at that limit. `--encoder auto` still chooses VideoToolbox on macOS, because x264 is not faster everywhere:
+
+| Encoder-only test | VideoToolbox 12 Mbps | x264 fast, CRF 18 |
+| --- | ---: | ---: |
+| SVG titles (time, size, SSIM) | 0.93 s, 0.93 MB, 0.9986 | 0.39 s, 0.15 MB, 0.9986 |
+| SVG particles | 0.42 s, 5.99 MB, 0.9963 | 0.25 s, 1.34 MB, 0.9942 |
+| Three.js orbit | 0.54 s, 3.79 MB, 0.9986 | 0.29 s, 0.57 MB, 0.9976 |
+| Worst-case noise, 4K, 60 frames | 1.20 s, 5.17 MB, 0.337 | 6.93 s, 186 MB, 0.640 |
+
+For clean motion graphics, `--encoder software` is the fastest choice and produces far smaller files, with slightly lower PSNR on particles and orbit. For heavy or noisy content, VideoToolbox is faster.
+
+## What changed
+
+1. **Direct Three.js stream.** Chromium sends pixels straight to a token-protected local WebSocket in the CLI. Previously Node unmasked every frame in JavaScript and re-piped it. This removes the `ws` dependency.
+2. **Frames in flight.** Three transfer buffers and fenced GPU readback let the page prepare the next frame while the GPU and transfer finish earlier ones. Rows are flipped in Rust, off the page's main thread.
+3. **Encoder pipeline.** A writer thread and one batch of lookahead run generation, rendering and encoding concurrently, with recycled frame buffers.
+4. **Socket pair to FFmpeg.** Large socket buffers avoid a context switch per 64 KiB pipe chunk on Unix.
+5. **Shared font mappings.** fontdb otherwise opens and maps the font file for every glyph, about 60% of active samples in title rendering. System fonts also load in the background, and SVGs without text do not wait for them.
+6. **Larger batches at high resolution.** The batch budget rose from 64 to 256 MiB; 4K previously rendered one frame at a time. Peak frame memory can be higher at 4K and above.
+7. **Startup and exit.** The hardware probe runs during runtime startup, the browser driver's bytecode is cached, the runtime depends on `playwright-core` alone, and Node skips its teardown.
+8. **Build profile.** Fat LTO, one codegen unit and mimalloc.
+
+## Output and failure checks
+
+Against v0.1.1: 28 lossless PNG samples and all 168 decoded frames from matched x264 videos match exactly, across SVG text and gradients, particles, both Three.js scenes, software rendering, custom render callbacks and letterboxed static SVG. Frames at an odd height also match. Ten tests pass locally. Both backend smoke checks pass, including failures after encoded batches: nonzero exit, no partial MP4 and an existing destination preserved. VideoToolbox files are not claimed to be byte-identical. Linux CI has not been run on this branch, and the non-Unix pipe fallback has not been compiled. Timings apply to this Mac and these workloads.
+
+Upgrading requires `framejet setup`, because runtime dependencies changed.
+
+# Earlier: v0.1.0 → v0.1.1
 
 Measured on an Apple M4 Pro, 14 logical CPUs, 24 GiB RAM, Node 24.13.1, and FFmpeg 9.0.2. Three.js used ANGLE Metal; all timed exports used VideoToolbox H.264 at the same 12 Mbps setting.
 
@@ -47,4 +92,4 @@ node scripts/bench.mjs /tmp/framejet-baseline/bin/framejet target/release/framej
 node scripts/parity.mjs /tmp/framejet-baseline/bin/framejet target/release/framejet artifacts/parity-check
 ```
 
-Use `--encoder software` when VideoToolbox is unavailable. `--workload three-orbit` (repeatable) selects individual benchmark cases. Choose a fresh results directory for each run. Keep other heavy work idle while timing; compare wall time and processing time separately.
+Use `--encoder software` when VideoToolbox is unavailable. `--workload three-orbit` (repeatable) selects individual benchmark cases. `--encoder auto` skips the encoder check. Choose a fresh results directory for each run. Keep other heavy work idle while timing; compare wall time and processing time separately.

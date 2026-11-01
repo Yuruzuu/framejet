@@ -62,6 +62,16 @@ pub struct Sample {
     pub frame: u64,
 }
 
+/// WebGL rows run bottom-up; video and PNG rows run top-down.
+fn flip_rows(pixels: &mut [u8], stride: usize) {
+    let middle = pixels.len() / stride / 2 * stride;
+    let (top, bottom) = pixels.split_at_mut(middle);
+    // With an odd height, `zip` stops before the middle row, which stays in place.
+    top.chunks_exact_mut(stride)
+        .zip(bottom.chunks_exact_mut(stride).rev())
+        .for_each(|(upper, lower)| upper.swap_with_slice(lower));
+}
+
 /// Rendered RGBA pixels: owned by one frame, or shared by every static frame.
 pub enum Frame {
     Owned(Vec<u8>),
@@ -256,10 +266,12 @@ impl Source {
                     })
                     .collect::<Result<_>>()
             })?;
-            frames.into_iter().try_for_each(|pixels| sink(Frame::Owned(pixels)))
+            frames
+                .into_iter()
+                .try_for_each(|pixels| sink(Frame::Owned(pixels)))
         } else {
             for sample in samples {
-                let pixels = worker.receive()?;
+                let mut pixels = worker.receive()?;
                 ensure!(
                     pixels.len() == self.video.frame_bytes(),
                     "Frame {} has {} bytes; expected {}",
@@ -267,9 +279,28 @@ impl Source {
                     pixels.len(),
                     self.video.frame_bytes()
                 );
+                flip_rows(&mut pixels, self.video.width as usize * 4);
                 sink(Frame::Owned(pixels))?;
             }
             Ok(())
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::flip_rows;
+
+    #[test]
+    fn flips_even_and_odd_heights() {
+        let mut even = vec![1, 1, 2, 2, 3, 3, 4, 4];
+        flip_rows(&mut even, 2);
+        assert_eq!(even, [4, 4, 3, 3, 2, 2, 1, 1]);
+        let mut odd = vec![1, 1, 2, 2, 3, 3];
+        flip_rows(&mut odd, 2);
+        assert_eq!(odd, [3, 3, 2, 2, 1, 1]);
+        let mut single = vec![1, 2];
+        flip_rows(&mut single, 2);
+        assert_eq!(single, [1, 2]);
     }
 }

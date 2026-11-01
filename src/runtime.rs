@@ -1,10 +1,5 @@
 use anyhow::{Context, Result, bail, ensure};
 use serde_json::Value;
-use tungstenite::{
-    Message, WebSocket,
-    handshake::server::{ErrorResponse, Request, Response},
-    protocol::WebSocketConfig,
-};
 use std::{
     fs,
     io::{BufRead, BufReader, Read, Write},
@@ -17,6 +12,11 @@ use std::{
         mpsc,
     },
     time::{Duration, Instant},
+};
+use tungstenite::{
+    Message, WebSocket,
+    handshake::server::{ErrorResponse, Request, Response},
+    protocol::WebSocketConfig,
 };
 
 pub fn directory() -> Result<PathBuf> {
@@ -80,7 +80,11 @@ pub fn setup(skip_browser: bool) -> Result<()> {
 
 /// Accepts one WebSocket holding the frame token and forwards its binary frames.
 /// The browser writes straight to Rust; Node only drives the page.
-fn serve_frames(listener: TcpListener, token: String, frames: mpsc::SyncSender<Result<Vec<u8>, String>>) {
+fn serve_frames(
+    listener: TcpListener,
+    token: String,
+    frames: mpsc::SyncSender<Result<Vec<u8>, String>>,
+) {
     let expected = format!("/frames/{token}");
     let configuration = WebSocketConfig::default()
         .max_message_size(Some(MAX_FRAME_BYTES))
@@ -89,23 +93,29 @@ fn serve_frames(listener: TcpListener, token: String, frames: mpsc::SyncSender<R
     for stream in listener.incoming() {
         let Ok(stream) = stream else { continue };
         let _ = stream.set_nodelay(true);
-        let authorize = |request: &Request, response: Response| -> Result<Response, ErrorResponse> {
-            if request.uri().path() == expected {
-                Ok(response)
-            } else {
-                let mut rejection = ErrorResponse::new(None);
-                *rejection.status_mut() = tungstenite::http::StatusCode::FORBIDDEN;
-                Err(rejection)
-            }
-        };
-        if let Ok(socket) = tungstenite::accept_hdr_with_config(stream, authorize, Some(configuration)) {
+        let authorize =
+            |request: &Request, response: Response| -> Result<Response, ErrorResponse> {
+                if request.uri().path() == expected {
+                    Ok(response)
+                } else {
+                    let mut rejection = ErrorResponse::new(None);
+                    *rejection.status_mut() = tungstenite::http::StatusCode::FORBIDDEN;
+                    Err(rejection)
+                }
+            };
+        if let Ok(socket) =
+            tungstenite::accept_hdr_with_config(stream, authorize, Some(configuration))
+        {
             forward_frames(socket, &frames);
             return;
         }
     }
 }
 
-fn forward_frames(mut socket: WebSocket<TcpStream>, frames: &mpsc::SyncSender<Result<Vec<u8>, String>>) {
+fn forward_frames(
+    mut socket: WebSocket<TcpStream>,
+    frames: &mpsc::SyncSender<Result<Vec<u8>, String>>,
+) {
     loop {
         let result = match socket.read() {
             Ok(Message::Close(_)) => Err(tungstenite::Error::ConnectionClosed),

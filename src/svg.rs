@@ -98,7 +98,11 @@ impl SvgRenderer {
                 );
             }
         }
-        let options = if needs_fonts { self.typed()? } else { &self.plain };
+        let options = if needs_fonts {
+            self.typed()?
+        } else {
+            &self.plain
+        };
         usvg::Tree::from_str(svg, options).context("Cannot parse SVG")
     }
 

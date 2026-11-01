@@ -155,7 +155,60 @@ async function startThree(configuration) {
       if (failure) throw failure;
       return free.pop();
     };
-    window.framejet = { renderer, state, video, context, transport, acquire };
+    // Read pixels through fenced buffers, so the GPU finishes a frame while JavaScript prepares the next.
+    const size = video.width * video.height * 4;
+    const readbacks = free.map(() => {
+      const buffer = context.createBuffer();
+      context.bindBuffer(context.PIXEL_PACK_BUFFER, buffer);
+      context.bufferData(context.PIXEL_PACK_BUFFER, size, context.STREAM_READ);
+      return { buffer, fence: null, sample: null };
+    });
+    context.bindBuffer(context.PIXEL_PACK_BUFFER, null);
+    const ticks = new MessageChannel();
+    const tick = () => new Promise(resolve => { ticks.port1.onmessage = resolve; ticks.port2.postMessage(0); });
+    const complete = async readback => {
+      const { fence, sample } = readback;
+      if (!fence) return;
+      try {
+        // Fence status only updates between tasks.
+        while (true) {
+          const status = context.clientWaitSync(fence, 0, 0);
+          if (status === context.ALREADY_SIGNALED || status === context.CONDITION_SATISFIED) break;
+          if (status === context.WAIT_FAILED || context.isContextLost()) throw new Error('WebGL context was lost');
+          await tick();
+        }
+        readback.fence = null;
+        context.deleteSync(fence);
+        const pixels = await acquire();
+        context.bindBuffer(context.PIXEL_PACK_BUFFER, readback.buffer);
+        context.getBufferSubData(context.PIXEL_PACK_BUFFER, 0, pixels);
+        context.bindBuffer(context.PIXEL_PACK_BUFFER, null);
+        // Rows stay bottom-up here; the CLI flips them off the page's main thread.
+        transport.port.postMessage({ buffer: pixels.buffer }, [pixels.buffer]);
+      } catch (error) { throw new Error(`Frame ${sample.frame} at ${sample.time}s: ${error.message}`); }
+    };
+    let cursor = 0;
+    // Finishes the oldest readback, whose errors already name their own frame.
+    const prepare = () => complete(readbacks[cursor]);
+    const capture = sample => {
+      const readback = readbacks[cursor];
+      cursor = (cursor + 1) % readbacks.length;
+      context.bindBuffer(context.PIXEL_PACK_BUFFER, readback.buffer);
+      context.readPixels(0, 0, video.width, video.height, context.RGBA, context.UNSIGNED_BYTE, 0);
+      context.bindBuffer(context.PIXEL_PACK_BUFFER, null);
+      if (context.isContextLost()) throw new Error('WebGL context was lost');
+      const error = context.getError();
+      if (error !== context.NO_ERROR) throw new Error(`WebGL readback failed: ${error}`);
+      readback.sample = sample;
+      readback.fence = context.fenceSync(context.SYNC_GPU_COMMANDS_COMPLETE, 0);
+      context.flush();
+    };
+    const drain = async () => {
+      for (let index = 0; index < readbacks.length; index++) {
+        await complete(readbacks[(cursor + index) % readbacks.length]);
+      }
+    };
+    window.framejet = { renderer, state, video, context, transport, prepare, capture, drain };
     return { ...video, gpu };
   }, { input: path.basename(configuration.input), overrides: configuration.overrides,
     streamUrl: configuration.streamUrl });
@@ -164,26 +217,18 @@ async function startThree(configuration) {
   }
   render = async samples => {
     await page.evaluate(async samples => {
-      const { renderer, state, video, context, transport, acquire } = window.framejet;
-      const pixels = new Uint8Array(video.width * video.height * 4);
-      const stride = video.width * 4;
+      const { renderer, state, video, prepare, capture, drain } = window.framejet;
       for (const sample of samples) {
+        await prepare();
         try {
           await state.update?.({ ...sample, ...video });
           if (state.render) await state.render({ renderer, ...sample, ...video });
           else renderer.render(state.scene, state.camera);
           renderer.setRenderTarget(null);
-          context.readPixels(0, 0, video.width, video.height, context.RGBA, context.UNSIGNED_BYTE, pixels);
-          if (context.isContextLost()) throw new Error('WebGL context was lost');
-          const error = context.getError();
-          if (error !== context.NO_ERROR) throw new Error(`WebGL readback failed: ${error}`);
-          const flipped = await acquire();
-          for (let row = 0; row < video.height; row++) {
-            flipped.set(pixels.subarray(row * stride, (row + 1) * stride), (video.height - 1 - row) * stride);
-          }
-          transport.port.postMessage({ buffer: flipped.buffer }, [flipped.buffer]);
+          capture(sample);
         } catch (error) { throw new Error(`Frame ${sample.frame} at ${sample.time}s: ${error.message}`); }
       }
+      await drain();
     }, samples);
   };
   dispose = async () => {
