@@ -46,7 +46,12 @@ function checkCombined(pixels, time) {
   if (x > 20) assert.deepEqual(pixel(pixels, 4, 4), black, 'Earlier CSS position must be empty');
 }
 
-async function checkRewind() {
+async function checkRewind(
+  input = 'animated.svg',
+  backend = 'svg-browser',
+  times = [2, 0, 1, 0.5, 1.25, 2],
+  check = checkCombined,
+) {
   const doctor = JSON.parse(run(executable, ['doctor']));
   const child = spawn('node', [path.join(doctor.runtime, 'worker.mjs')], {
     stdio: ['pipe', 'pipe', 'pipe'],
@@ -91,14 +96,13 @@ async function checkRewind() {
   try {
     child.stdin.write(
       JSON.stringify({
-        backend: 'svg-browser',
-        input: fixture('animated.svg'),
+        backend,
+        input: fixture(input),
         video: { width: 96, height: 96, fps: 4, duration: 3 },
         overrides: {},
       }) + '\n',
     );
     assert.equal((await next()).kind, 0);
-    const times = [2, 0, 1, 0.5, 1.25, 2];
     child.stdin.write(
       JSON.stringify({
         command: 'frames',
@@ -110,7 +114,7 @@ async function checkRewind() {
       assert.equal(packet.kind, 3);
       const file = path.join(directory, `${serial++}.png`);
       writeFileSync(file, packet.bytes);
-      checkCombined(
+      check(
         run('ffmpeg', ['-v', 'error', '-i', file, '-f', 'rawvideo', '-pix_fmt', 'rgba', '-']),
         time,
       );
@@ -189,6 +193,21 @@ try {
   assert.deepEqual(pixel(shortStart, 4, 52), blue, 'Stepped CSS animation starts at zero');
   assert.deepEqual(pixel(shortEnd, 36, 52), blue, 'Stepped CSS animation switches at one second');
   console.log('Very short CSS animations, sub-frame times, negative delays and steps passed');
+  await checkRewind(
+    'animated-timing.svg.mjs',
+    'svg',
+    Array.from({ length: 10 }, () => [0, 0.0005, 0.001]).flat(),
+    (pixels, time) => {
+      const expected = Math.round(Math.min(time / 0.001, 1) * 255);
+      const actual = pixel(pixels, 4, 4);
+      assert.ok(
+        Math.abs(actual[0] - expected) <= 1,
+        `Repeated short animation at ${time}s: ${actual}`,
+      );
+      assert.deepEqual(actual.slice(1), [0, 0, 255]);
+    },
+  );
+  console.log('Thirty fresh CSS timeline captures preserve exact sub-frame times');
 
   const sheet = path.join(directory, 'sheet.png');
   run(executable, [

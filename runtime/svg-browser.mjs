@@ -142,10 +142,15 @@ export async function createSvgBrowser(configuration, video) {
           if (!(animation.timeline instanceof DocumentTimeline))
             throw new Error('SVG export requires time-based CSS animations');
           const paused = animation.playState === 'paused';
-          animation.pause();
-          animation.currentTime = 0;
-          return { animation, paused };
+          // CSS-owned animations can finish or be replaced during style updates.
+          // A controlled copy retains the keyframes/timing without that clock.
+          const controlled = new Animation(new KeyframeEffect(animation.effect), document.timeline);
+          animation.cancel();
+          controlled.pause();
+          controlled.currentTime = 0;
+          return { animation: controlled, paused };
         });
+        await Promise.all(window.framejetSvg.map(({ animation }) => animation.ready));
         await document.fonts.ready;
       });
       if (failures.length) throw new Error(`SVG resources failed to load: ${failures.join('; ')}`);
