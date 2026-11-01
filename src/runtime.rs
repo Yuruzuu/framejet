@@ -108,17 +108,20 @@ fn serve_frames(listener: TcpListener, token: String, frames: mpsc::SyncSender<R
 fn forward_frames(mut socket: WebSocket<TcpStream>, frames: &mpsc::SyncSender<Result<Vec<u8>, String>>) {
     loop {
         let result = match socket.read() {
+            Ok(Message::Close(_)) => Err(tungstenite::Error::ConnectionClosed),
             Ok(Message::Binary(bytes)) => {
                 if frames.send(Ok(Vec::from(bytes))).is_err() {
                     return;
                 }
                 socket.send(Message::text("ok"))
             }
-            Ok(Message::Close(_)) | Err(tungstenite::Error::ConnectionClosed) => return,
             Ok(_) => Ok(()),
             Err(error) => Err(error),
         };
         if result.is_err() {
+            // Frames in flight would otherwise leave the CLI waiting for its timeout.
+            // During normal shutdown nobody is listening, so this must not block.
+            let _ = frames.try_send(Err("Frame stream disconnected".to_owned()));
             return;
         }
     }

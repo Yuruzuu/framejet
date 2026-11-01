@@ -1,7 +1,7 @@
 // A shared worker keeps raw pixels out of the page's DevTools network traffic.
 onconnect = ({ ports: [port] }) => {
   let socket;
-  let pending;
+  const pending = [];
 
   port.onmessage = ({ data }) => {
     if (data.url) {
@@ -10,8 +10,8 @@ onconnect = ({ ports: [port] }) => {
       socket.onerror = socket.onclose = () => port.postMessage({ error: 'Frame stream disconnected' });
       socket.onmessage = ({ data }) => {
         if (data === 'ok') {
-          port.postMessage({ buffer: pending }, [pending]);
-          pending = null;
+          const buffer = pending.shift();
+          port.postMessage({ buffer }, [buffer]);
         } else port.postMessage({ error: `Frame transfer failed: ${data}` });
       };
     } else if (data.close) {
@@ -19,8 +19,8 @@ onconnect = ({ ports: [port] }) => {
       port.close();
       close();
     } else {
-      pending = data.buffer;
-      socket.send(pending);
+      pending.push(data.buffer);
+      socket.send(data.buffer);
     }
   };
   port.start();

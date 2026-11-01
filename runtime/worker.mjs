@@ -135,7 +135,23 @@ async function startThree(configuration) {
       transport.port.start();
       transport.port.postMessage({ url: streamUrl });
     });
-    window.framejet = { renderer, state, video, context, transport };
+    // A few frames may be in flight, so drawing continues during transfers.
+    const free = Array.from({ length: 3 }, () => new Uint8Array(video.width * video.height * 4));
+    let waiting = null;
+    let failure = null;
+    const settle = () => { waiting?.(); waiting = null; };
+    transport.onerror = () => { failure = new Error('Frame transport worker failed'); settle(); };
+    transport.port.onmessage = ({ data }) => {
+      if (data.error) failure = new Error(data.error);
+      else free.push(new Uint8Array(data.buffer));
+      settle();
+    };
+    const acquire = async () => {
+      while (!free.length && !failure) await new Promise(resolve => { waiting = resolve; });
+      if (failure) throw failure;
+      return free.pop();
+    };
+    window.framejet = { renderer, state, video, context, transport, acquire };
     return { ...video, gpu };
   }, { input: path.basename(configuration.input), overrides: configuration.overrides,
     streamUrl: configuration.streamUrl });
@@ -144,9 +160,8 @@ async function startThree(configuration) {
   }
   render = async samples => {
     await page.evaluate(async samples => {
-      const { renderer, state, video, context, transport } = window.framejet;
+      const { renderer, state, video, context, transport, acquire } = window.framejet;
       const pixels = new Uint8Array(video.width * video.height * 4);
-      let flipped = new Uint8Array(pixels.length);
       const stride = video.width * 4;
       for (const sample of samples) {
         try {
@@ -158,20 +173,11 @@ async function startThree(configuration) {
           if (context.isContextLost()) throw new Error('WebGL context was lost');
           const error = context.getError();
           if (error !== context.NO_ERROR) throw new Error(`WebGL readback failed: ${error}`);
+          const flipped = await acquire();
           for (let row = 0; row < video.height; row++) {
             flipped.set(pixels.subarray(row * stride, (row + 1) * stride), (video.height - 1 - row) * stride);
           }
-          await new Promise((resolve, reject) => {
-            transport.onerror = () => reject(new Error('Frame transport worker failed'));
-            transport.port.onmessage = ({ data }) => {
-              if (data.error) reject(new Error(data.error));
-              else {
-                flipped = new Uint8Array(data.buffer);
-                resolve();
-              }
-            };
-            transport.port.postMessage({ buffer: flipped.buffer }, [flipped.buffer]);
-          });
+          transport.port.postMessage({ buffer: flipped.buffer }, [flipped.buffer]);
         } catch (error) { throw new Error(`Frame ${sample.frame} at ${sample.time}s: ${error.message}`); }
       }
     }, samples);
