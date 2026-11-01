@@ -172,10 +172,15 @@ impl Source {
             )?));
             video
         } else {
-            let configuration = serde_json::json!({"input":input,"backend":backend,"softwareRendering":arguments.software_rendering,"overrides":{
+            let mut configuration = serde_json::json!({"input":input,"backend":backend,"softwareRendering":arguments.software_rendering,"overrides":{
                 "width":arguments.width,"height":arguments.height,"fps":arguments.fps,"duration":arguments.duration
             }});
-            let mut runtime = Worker::start(&configuration, arguments.timeout, cancelled.clone())?;
+            let mut runtime = Worker::start(
+                &mut configuration,
+                backend == "three",
+                arguments.timeout,
+                cancelled.clone(),
+            )?;
             let video: Video = serde_json::from_slice(&runtime.receive()?)
                 .context("Invalid animation metadata")?;
             worker = Some(runtime);

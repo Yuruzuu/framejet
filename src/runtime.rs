@@ -1,8 +1,14 @@
 use anyhow::{Context, Result, bail, ensure};
 use serde_json::Value;
+use tungstenite::{
+    Message, WebSocket,
+    handshake::server::{ErrorResponse, Request, Response},
+    protocol::WebSocketConfig,
+};
 use std::{
     fs,
     io::{BufRead, BufReader, Read, Write},
+    net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
     process::{Child, ChildStdin, Command, Stdio},
     sync::{
@@ -72,6 +78,54 @@ pub fn setup(skip_browser: bool) -> Result<()> {
     Ok(())
 }
 
+/// Accepts one WebSocket holding the frame token and forwards its binary frames.
+/// The browser writes straight to Rust; Node only drives the page.
+fn serve_frames(listener: TcpListener, token: String, frames: mpsc::SyncSender<Result<Vec<u8>, String>>) {
+    let expected = format!("/frames/{token}");
+    let configuration = WebSocketConfig::default()
+        .max_message_size(Some(MAX_FRAME_BYTES))
+        .max_frame_size(Some(MAX_FRAME_BYTES))
+        .read_buffer_size(1024 * 1024);
+    for stream in listener.incoming() {
+        let Ok(stream) = stream else { continue };
+        let _ = stream.set_nodelay(true);
+        let authorize = |request: &Request, response: Response| -> Result<Response, ErrorResponse> {
+            if request.uri().path() == expected {
+                Ok(response)
+            } else {
+                let mut rejection = ErrorResponse::new(None);
+                *rejection.status_mut() = tungstenite::http::StatusCode::FORBIDDEN;
+                Err(rejection)
+            }
+        };
+        if let Ok(socket) = tungstenite::accept_hdr_with_config(stream, authorize, Some(configuration)) {
+            forward_frames(socket, &frames);
+            return;
+        }
+    }
+}
+
+fn forward_frames(mut socket: WebSocket<TcpStream>, frames: &mpsc::SyncSender<Result<Vec<u8>, String>>) {
+    loop {
+        let result = match socket.read() {
+            Ok(Message::Binary(bytes)) => {
+                if frames.send(Ok(Vec::from(bytes))).is_err() {
+                    return;
+                }
+                socket.send(Message::text("ok"))
+            }
+            Ok(Message::Close(_)) | Err(tungstenite::Error::ConnectionClosed) => return,
+            Ok(_) => Ok(()),
+            Err(error) => Err(error),
+        };
+        if result.is_err() {
+            return;
+        }
+    }
+}
+
+const MAX_FRAME_BYTES: usize = 134_217_728;
+
 pub struct Worker {
     child: Child,
     input: Option<ChildStdin>,
@@ -81,7 +135,12 @@ pub struct Worker {
 }
 
 impl Worker {
-    pub fn start(configuration: &Value, timeout: u64, cancelled: Arc<AtomicBool>) -> Result<Self> {
+    pub fn start(
+        configuration: &mut Value,
+        frame_stream: bool,
+        timeout: u64,
+        cancelled: Arc<AtomicBool>,
+    ) -> Result<Self> {
         let directory = prepare()?;
         let mut child = Command::new("node")
             .arg(directory.join("worker.mjs"))
@@ -93,6 +152,20 @@ impl Worker {
         let input = child.stdin.take().context("Cannot open runtime input")?;
         let output = child.stdout.take().context("Cannot open runtime output")?;
         let (sender, messages) = mpsc::sync_channel(1);
+        if frame_stream {
+            let listener = TcpListener::bind(("127.0.0.1", 0))
+                .context("Cannot open the local frame stream")?;
+            let mut random = [0u8; 24];
+            getrandom::fill(&mut random).map_err(|error| anyhow::anyhow!("{error}"))?;
+            let token: String = random.iter().map(|byte| format!("{byte:02x}")).collect();
+            configuration["streamUrl"] = format!(
+                "ws://127.0.0.1:{}/frames/{token}",
+                listener.local_addr()?.port()
+            )
+            .into();
+            let frames = sender.clone();
+            std::thread::spawn(move || serve_frames(listener, token, frames));
+        }
         std::thread::spawn(move || {
             let mut reader = BufReader::new(output);
             loop {

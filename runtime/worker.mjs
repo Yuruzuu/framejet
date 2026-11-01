@@ -5,15 +5,14 @@ import { readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createServer } from 'node:http';
-import { randomBytes } from 'node:crypto';
 
-// stdout is a binary protocol; animation logs belong on stderr.
+// stdout carries metadata, SVG markup and errors; animation logs belong on stderr.
 for (const method of ['log', 'info', 'debug', 'warn', 'error']) {
   console[method] = (...values) => process.stderr.write(`${format(...values)}\n`);
 }
 
 async function packet(kind, value) {
-  const bytes = Buffer.isBuffer(value) ? value : Buffer.from(value);
+  const bytes = Buffer.from(value);
   const header = Buffer.alloc(5);
   header[0] = kind;
   header.writeUInt32LE(bytes.length, 1);
@@ -38,7 +37,6 @@ function metadata(video, overrides) {
 
 let browser;
 let server;
-let streamServer;
 let session;
 let render;
 let dispose;
@@ -46,21 +44,13 @@ let dispose;
 async function close() {
   await dispose?.();
   await browser?.close();
-  if (streamServer) {
-    for (const client of streamServer.clients) client.terminate();
-    await new Promise(resolve => streamServer.close(resolve));
-  }
   server?.closeAllConnections();
   if (server) await new Promise(resolve => server.close(resolve));
 }
 
 async function startThree(configuration) {
   let chromium;
-  let WebSocketServer;
-  try {
-    ({ chromium } = await import('playwright'));
-    ({ WebSocketServer } = await import('ws'));
-  }
+  try { ({ chromium } = await import('playwright')); }
   catch { throw new Error('Three.js runtime is missing. Run: framejet setup'); }
   const project = path.dirname(configuration.input);
   const dependencyRoot = fileURLToPath(new URL('./node_modules/', import.meta.url));
@@ -95,18 +85,6 @@ async function startThree(configuration) {
       if (!response.headersSent) response.writeHead(500);
       response.end('Framejet could not serve this resource');
     }
-  });
-  const streamPath = `/frames/${randomBytes(24).toString('hex')}`;
-  streamServer = new WebSocketServer({ server, path: streamPath, maxPayload: 134217728, perMessageDeflate: false });
-  streamServer.on('connection', socket => {
-    socket.on('error', error => console.error(`Frame stream: ${error.message}`));
-    socket.on('message', async (bytes, binary) => {
-      try {
-        if (!binary) throw new Error('Expected a binary frame');
-        await packet(1, bytes);
-        socket.send('ok');
-      } catch (error) { socket.send(`error: ${error.message}`); }
-    });
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const arguments_ = ['--enable-webgl', '--ignore-gpu-blocklist'];
@@ -160,7 +138,7 @@ async function startThree(configuration) {
     window.framejet = { renderer, state, video, context, transport };
     return { ...video, gpu };
   }, { input: path.basename(configuration.input), overrides: configuration.overrides,
-    streamUrl: `ws://127.0.0.1:${server.address().port}${streamPath}` });
+    streamUrl: configuration.streamUrl });
   if (/swiftshader|llvmpipe|softpipe|software/i.test(info.gpu)) {
     console.warn(`Three.js is using software rendering: ${info.gpu}`);
   }
