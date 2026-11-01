@@ -71,6 +71,11 @@ async function startThree(configuration) {
   server = createServer(async (request, response) => {
     try {
       const url = new URL(request.url, 'http://localhost');
+      if (url.pathname === '/frame-transport.js') {
+        response.setHeader('Content-Type', 'text/javascript');
+        response.end(await readFile(new URL('./frame-transport.js', import.meta.url)));
+        return;
+      }
       if (url.pathname === '/') {
         response.setHeader('Content-Type', 'text/html');
         response.end(`<base href="/project/"><script type="importmap">{"imports":{"three":"/dependencies/three/build/three.module.js","three/addons/":"/dependencies/three/examples/jsm/"}}</script>`);
@@ -140,12 +145,19 @@ async function startThree(configuration) {
     const context = renderer.getContext();
     const extension = context.getExtension('WEBGL_debug_renderer_info');
     const gpu = extension ? context.getParameter(extension.UNMASKED_RENDERER_WEBGL) : context.getParameter(context.RENDERER);
-    const socket = new WebSocket(streamUrl);
+    // Keep bulk frames outside the page's DevTools network session, which
+    // otherwise duplicates every WebSocket payload as base64 protocol traffic.
+    const transport = new SharedWorker('/frame-transport.js');
     await new Promise((resolve, reject) => {
-      socket.onopen = resolve;
-      socket.onerror = () => reject(new Error('Cannot connect to frame stream'));
+      transport.onerror = () => reject(new Error('Frame transport worker failed'));
+      transport.port.onmessage = ({ data }) => {
+        if (data.ready) resolve();
+        else reject(new Error(data.error));
+      };
+      transport.port.start();
+      transport.port.postMessage({ url: streamUrl });
     });
-    window.framejet = { renderer, state, video, context, socket };
+    window.framejet = { renderer, state, video, context, transport };
     return { ...video, gpu };
   }, { input: path.basename(configuration.input), overrides: configuration.overrides,
     streamUrl: `ws://127.0.0.1:${server.address().port}${streamPath}` });
@@ -154,9 +166,9 @@ async function startThree(configuration) {
   }
   render = async samples => {
     await page.evaluate(async samples => {
-      const { renderer, state, video, context, socket } = window.framejet;
+      const { renderer, state, video, context, transport } = window.framejet;
       const pixels = new Uint8Array(video.width * video.height * 4);
-      const flipped = new Uint8Array(pixels.length);
+      let flipped = new Uint8Array(pixels.length);
       const stride = video.width * 4;
       for (const sample of samples) {
         try {
@@ -172,14 +184,15 @@ async function startThree(configuration) {
             flipped.set(pixels.subarray(row * stride, (row + 1) * stride), (video.height - 1 - row) * stride);
           }
           await new Promise((resolve, reject) => {
-            const cleanup = () => { socket.onmessage = null; socket.onerror = null; socket.onclose = null; };
-            socket.onmessage = event => {
-              cleanup();
-              if (event.data === 'ok') resolve();
-              else reject(new Error(`Frame transfer failed: ${event.data}`));
+            transport.onerror = () => reject(new Error('Frame transport worker failed'));
+            transport.port.onmessage = ({ data }) => {
+              if (data.error) reject(new Error(data.error));
+              else {
+                flipped = new Uint8Array(data.buffer);
+                resolve();
+              }
             };
-            socket.onerror = socket.onclose = () => { cleanup(); reject(new Error('Frame stream disconnected')); };
-            socket.send(flipped);
+            transport.port.postMessage({ buffer: flipped.buffer }, [flipped.buffer]);
           });
         } catch (error) { throw new Error(`Frame ${sample.frame} at ${sample.time}s: ${error.message}`); }
       }
@@ -188,7 +201,8 @@ async function startThree(configuration) {
   dispose = async () => {
     await page.evaluate(async () => {
       await window.framejet?.state.dispose?.();
-      window.framejet?.socket.close();
+      window.framejet?.transport.port.postMessage({ close: true });
+      window.framejet?.transport.port.close();
       window.framejet?.renderer.dispose();
     }).catch(() => {});
   };

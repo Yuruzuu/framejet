@@ -111,6 +111,25 @@ export function render({ time, frame }) {
 }
 
 #[test]
+fn successful_module_exits_normally() {
+    let directory = TempDir::new().unwrap();
+    fs::write(directory.path().join("scene.mjs"), r#"
+import { writeFileSync } from 'node:fs';
+process.on('exit', () => writeFileSync(new URL('exited.txt', import.meta.url), 'normal exit'));
+export const video = { width: 8, height: 8 };
+export function render() { return '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"/>'; }
+"#).unwrap();
+    success(run(
+        &["frame", "scene.mjs", "-o", "image.png"],
+        directory.path(),
+    ));
+    assert_eq!(
+        fs::read_to_string(directory.path().join("exited.txt")).unwrap(),
+        "normal exit"
+    );
+}
+
+#[test]
 fn module_failure_preserves_existing_output_and_cleans_temporary_files() {
     let directory = TempDir::new().unwrap();
     fs::write(

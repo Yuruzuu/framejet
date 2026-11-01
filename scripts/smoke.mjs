@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, existsSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -48,12 +48,19 @@ try {
 
   const failing = path.join(temporary, 'failure.mjs');
   const output = path.join(temporary, 'failure.mp4');
-  writeFileSync(failing, `export const video = {width:64,height:64,fps:4,duration:1}; export function render({frame}) { if(frame===2) throw new Error('smoke failure'); return '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"/>'; }`);
-  const result = spawnSync(executable, ['render', failing, '-o', output, '--encoder', 'software'], { encoding: 'utf8', timeout: 30000 });
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /smoke failure/);
-  assert.equal(existsSync(output), false, 'Failed renders must not leave a final MP4');
-  console.log('partial render failure: nonzero exit and no published output passed');
+  writeFileSync(failing, `export const video = {width:64,height:64,fps:4,duration:5}; export function render({frame}) { if(frame===18) throw new Error('smoke failure'); return '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"/>'; }`);
+  for (const input of [failing, path.join(root, 'tests/fixtures/failure.three.mjs')]) {
+    const result = spawnSync(executable, ['render', input, '-o', output, '--encoder', 'software'], { encoding: 'utf8', timeout: 30000 });
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /smoke failure/);
+    assert.equal(existsSync(output), false, 'Failed renders must not leave a final MP4');
+    writeFileSync(output, 'existing video');
+    const replacement = spawnSync(executable, ['render', input, '-o', output, '--force', '--encoder', 'software'], { encoding: 'utf8', timeout: 30000 });
+    assert.equal(replacement.status, 1);
+    assert.equal(readFileSync(output, 'utf8'), 'existing video');
+    rmSync(output);
+  }
+  console.log('SVG/Three.js failures after encoded batches: nonzero exit, cleanup and existing video preservation passed');
 } finally {
   rmSync(temporary, { recursive: true, force: true });
 }

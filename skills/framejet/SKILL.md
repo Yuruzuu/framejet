@@ -5,7 +5,7 @@ description: Render SVG or Three.js animations as MP4 videos with Framejet, and 
 
 # Framejet
 
-Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. If missing, install with `cargo install --git https://github.com/Yuruzuu/framejet --tag v0.1.0 --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the pinned Three.js runtime and Chromium. SVG-only use does not need Chromium.
+Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. If missing, install with `cargo install --git https://github.com/Yuruzuu/framejet --tag v0.1.1 --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the pinned Three.js runtime and Chromium. SVG-only use does not need Chromium.
 
 Create a small `.mjs` adapter next to existing animation assets, preserving the requested design and original source. Animation comes from explicit `time` in seconds, not timers or real-time playback. Frame/contact-sheet requests can sample times out of order. Await asset loads before rendering.
 
@@ -20,7 +20,7 @@ export function render({ time, frame, width, height, fps, duration }) {
 }
 ```
 
-**Three.js:** name it `animation.three.mjs`. Export the same `video` metadata and `setup({ THREE, renderer, width, height })`, returning `{ scene, camera, update({ time, frame }) }`. Build geometry once in `setup`; pose it in `update`. `setup` may be async. Browser imports support `three`, `three/addons/...`, and relative modules/assets inside the adapter's directory. Other packages need bundling. For postprocessing, return `render({ renderer, time, frame })` that draws to the canvas. See the [complete example](https://github.com/Yuruzuu/framejet/blob/v0.1.0/examples/orbit.three.mjs).
+**Three.js:** name it `animation.three.mjs`. Export the same `video` metadata and `setup({ THREE, renderer, width, height })`, returning `{ scene, camera, update({ time, frame }) }`. Build geometry once in `setup`; pose it in `update`. `setup` may be async. Browser imports support `three`, `three/addons/...`, and relative modules/assets inside the adapter's directory. Other packages need bundling. For postprocessing, return `render({ renderer, time, frame })` that draws to the canvas. See the [complete example](https://github.com/Yuruzuu/framejet/blob/v0.1.1/examples/orbit.three.mjs).
 
 ```sh
 framejet frame animation.svg.mjs --time 1 -o frame.png

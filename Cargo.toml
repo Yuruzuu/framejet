@@ -1,12 +1,12 @@
 [package]
 name = "framejet"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 rust-version = "1.88"
 description = "Render SVG and Three.js animations to video with a Rust CLI"
 license = "MIT"
 repository = "https://github.com/Yuruzuu/framejet"
-include = ["src/**", "runtime/worker.mjs", "runtime/package.json", "runtime/package-lock.json", "README.md", "LICENSE", "Cargo.lock"]
+include = ["src/**", "runtime/worker.mjs", "runtime/frame-transport.js", "runtime/package.json", "runtime/package-lock.json", "README.md", "LICENSE", "Cargo.lock"]
 
 [dependencies]
 anyhow = "1"

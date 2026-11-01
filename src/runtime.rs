@@ -25,6 +25,10 @@ pub fn prepare() -> Result<PathBuf> {
     fs::create_dir_all(&directory)?;
     for (name, content) in [
         ("worker.mjs", include_str!("../runtime/worker.mjs")),
+        (
+            "frame-transport.js",
+            include_str!("../runtime/frame-transport.js"),
+        ),
         ("package.json", include_str!("../runtime/package.json")),
         (
             "package-lock.json",
@@ -70,7 +74,7 @@ pub fn setup(skip_browser: bool) -> Result<()> {
 
 pub struct Worker {
     child: Child,
-    input: ChildStdin,
+    input: Option<ChildStdin>,
     messages: mpsc::Receiver<Result<Vec<u8>, String>>,
     timeout: Duration,
     cancelled: Arc<AtomicBool>,
@@ -117,7 +121,7 @@ impl Worker {
         });
         let mut worker = Self {
             child,
-            input,
+            input: Some(input),
             messages,
             timeout: Duration::from_secs(timeout),
             cancelled,
@@ -127,11 +131,12 @@ impl Worker {
     }
 
     pub fn send(&mut self, value: &Value) -> Result<()> {
-        serde_json::to_writer(&mut self.input, value)?;
-        self.input
+        let input = self.input.as_mut().context("Runtime input is closed")?;
+        serde_json::to_writer(&mut *input, value)?;
+        input
             .write_all(b"\n")
             .context("Runtime stopped accepting commands")?;
-        self.input.flush()?;
+        input.flush()?;
         Ok(())
     }
 
@@ -156,7 +161,9 @@ impl Worker {
 
 impl Drop for Worker {
     fn drop(&mut self) {
-        let _ = self.input.write_all(b"{\"command\":\"close\"}\n");
+        if let Some(mut input) = self.input.take() {
+            let _ = input.write_all(b"{\"command\":\"close\"}\n");
+        }
         for _ in 0..20 {
             if self.child.try_wait().ok().flatten().is_some() {
                 return;
