@@ -72,10 +72,10 @@ When file size matters more, try `--crf 20`, then review before increasing to `2
 
 ### CSS and SMIL
 
-CSS/SMIL support is currently on the `feat/svg-animations` development branch:
+CSS/SMIL support is available in the current `main` development build. The published v0.1.2 binary predates this feature, so build from source:
 
 ```sh
-cargo install --git https://github.com/Yuruzuu/framejet --branch feat/svg-animations --locked
+cargo install --git https://github.com/Yuruzuu/framejet --locked
 framejet setup
 framejet render animation.svg --duration 4 --fps 30 --encoder software -o video.mp4
 framejet frame animation.svg --time 1.5 -o frame.png
@@ -89,6 +89,8 @@ Use `--svg-renderer browser` to force Chromium, `--svg-renderer native` to requi
 Chromium draws animated SVGs directly; this path uses PNG capture and has different performance and text rasterization from native SVG rendering. Assets and CSS URLs resolve beside the input file. System fonts and CSS `@font-face` work in the browser; `--font` remains native-only. SVG scripts and `foreignObject` remain unsupported. Interaction-driven triggers, CSS transition histories, scroll timelines, and independently animated embedded images are not simulated.
 
 See [examples/css-smil.svg](examples/css-smil.svg), which combines CSS text animation with SMIL rotation and progress.
+
+For measured export times and a matched native/browser comparison, see [CSS/SMIL speed](bench/svg-speed.md).
 
 ### JavaScript-generated frames
 

@@ -1,0 +1,215 @@
+{
+  "manifest": {
+    "version": "framejet 0.2.0-dev",
+    "binary_sha256": "f6b0e5f51b144a381c5d1fcfe8116894614b6d3ae0acaa08600bfd3cb17b35e6",
+    "cpu": "Apple M4 Pro",
+    "logical_cpus": 14,
+    "memory_bytes": 25769803776,
+    "encoder": "libx264",
+    "crf": 18,
+    "preset": "fast",
+    "fps": 30,
+    "duration": 4,
+    "frames": 120,
+    "warmups": 1,
+    "repetitions": 3,
+    "ffmpeg": "ffmpeg version 9.0.2-https://www.martin-riedl.de Copyright (c) 2000-2026 the FFmpeg developers",
+    "cases": [
+      {
+        "name": "css-smil-540p",
+        "input": "examples/css-smil.svg",
+        "width": 960,
+        "height": 540,
+        "sha256": "4b1e518ebf27d535d99e95477302bb5eb7134ad70313551da5d0460d5015ec4f"
+      },
+      {
+        "name": "css-smil-1080p",
+        "input": "examples/css-smil.svg",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "4b1e518ebf27d535d99e95477302bb5eb7134ad70313551da5d0460d5015ec4f"
+      },
+      {
+        "name": "matched-native",
+        "input": "bench/animated-native.svg.mjs",
+        "width": 960,
+        "height": 540,
+        "sha256": "e2158abc66ce91a7f16af4668b6c1e5aa42e809f311ac04fd244e32fb4644455"
+      },
+      {
+        "name": "matched-browser",
+        "input": "tests/fixtures/animated.svg",
+        "width": 960,
+        "height": 540,
+        "sha256": "433b071b1d7c9c768b08bcad3c81dee75b4898cc4001f3290ae020bebc37c43a"
+      }
+    ],
+    "renderer_commit": "13b9368988e2d45cf6945f1133fc131dc80c6ae5",
+    "node": "v24.13.1"
+  },
+  "records": [
+    {
+      "name": "css-smil-540p",
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 6.661025458,
+      "processing_seconds": 6.586329417
+    },
+    {
+      "name": "css-smil-1080p",
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 18.322601209,
+      "processing_seconds": 18.26047775
+    },
+    {
+      "name": "matched-native",
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 0.135573125,
+      "processing_seconds": 0.098395042
+    },
+    {
+      "name": "matched-browser",
+      "warmup": true,
+      "round": -1,
+      "wall_seconds": 2.341969791,
+      "processing_seconds": 2.294394375
+    },
+    {
+      "name": "matched-browser",
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 2.33841775,
+      "processing_seconds": 2.289541167
+    },
+    {
+      "name": "matched-native",
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 0.130046375,
+      "processing_seconds": 0.098537
+    },
+    {
+      "name": "css-smil-1080p",
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 17.938652833,
+      "processing_seconds": 17.881573958
+    },
+    {
+      "name": "css-smil-540p",
+      "warmup": false,
+      "round": 0,
+      "wall_seconds": 7.067906834,
+      "processing_seconds": 7.014591083
+    },
+    {
+      "name": "css-smil-540p",
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 6.385867541,
+      "processing_seconds": 6.313576542
+    },
+    {
+      "name": "css-smil-1080p",
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 18.363869917,
+      "processing_seconds": 18.305546875
+    },
+    {
+      "name": "matched-native",
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 0.132540959,
+      "processing_seconds": 0.098000708
+    },
+    {
+      "name": "matched-browser",
+      "warmup": false,
+      "round": 1,
+      "wall_seconds": 2.368815792,
+      "processing_seconds": 2.318993667
+    },
+    {
+      "name": "matched-browser",
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 2.3272095,
+      "processing_seconds": 2.2760552499999998
+    },
+    {
+      "name": "matched-native",
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 0.136494916,
+      "processing_seconds": 0.103122084
+    },
+    {
+      "name": "css-smil-1080p",
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 18.4168315,
+      "processing_seconds": 18.364091666
+    },
+    {
+      "name": "css-smil-540p",
+      "warmup": false,
+      "round": 2,
+      "wall_seconds": 6.380226875,
+      "processing_seconds": 6.327568625
+    }
+  ],
+  "summary": [
+    {
+      "name": "css-smil-540p",
+      "width": 960,
+      "height": 540,
+      "median_seconds": 6.385867541,
+      "whole_command_fps": 18.79149531830228,
+      "samples": [
+        7.067906834,
+        6.385867541,
+        6.380226875
+      ]
+    },
+    {
+      "name": "css-smil-1080p",
+      "width": 1920,
+      "height": 1080,
+      "median_seconds": 18.363869917,
+      "whole_command_fps": 6.534570357030917,
+      "samples": [
+        17.938652833,
+        18.363869917,
+        18.4168315
+      ]
+    },
+    {
+      "name": "matched-native",
+      "width": 960,
+      "height": 540,
+      "median_seconds": 0.132540959,
+      "whole_command_fps": 905.3805020378643,
+      "samples": [
+        0.130046375,
+        0.132540959,
+        0.136494916
+      ]
+    },
+    {
+      "name": "matched-browser",
+      "width": 960,
+      "height": 540,
+      "median_seconds": 2.33841775,
+      "whole_command_fps": 51.316750396715896,
+      "samples": [
+        2.33841775,
+        2.368815792,
+        2.3272095
+      ]
+    }
+  ],
+  "matched_fixture_decoded_frames_identical": true
+}

@@ -5,7 +5,7 @@ description: Render SVG or Three.js animations as MP4 videos with Framejet, and 
 
 # Framejet
 
-Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. The CSS/SMIL development build installs with `cargo install --git https://github.com/Yuruzuu/framejet --branch feat/svg-animations --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the runtime and Chromium. Native static SVG does not need Chromium; CSS/SMIL and Three.js do.
+Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. Install the current source build for CSS/SMIL with `cargo install --git https://github.com/Yuruzuu/framejet --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the runtime and Chromium. Native static SVG does not need Chromium; CSS/SMIL and Three.js do.
 
 Create a small `.mjs` adapter next to existing animation assets, preserving the requested design and original source. Animation comes from explicit `time` in seconds, not timers or real-time playback. Frame/contact-sheet requests can sample times out of order. Await asset loads before rendering.
 
