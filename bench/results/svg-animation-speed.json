@@ -1,7 +1,7 @@
 {
   "manifest": {
     "version": "framejet 0.2.0-dev",
-    "binary_sha256": "4aabe4c33458f3973687ab2f17aeca2c519a63f5ee6ff027f99a9bc4d7c7e36b",
+    "binary_sha256": "d03f9d2caba828c95b79dd0c8b034be5eb6d4d115dc21508a1c054501f2601be",
     "cpu": "Apple M4 Pro",
     "logical_cpus": 14,
     "memory_bytes": 25769803776,
@@ -44,7 +44,7 @@
         "sha256": "433b071b1d7c9c768b08bcad3c81dee75b4898cc4001f3290ae020bebc37c43a"
       }
     ],
-    "renderer_commit": "a62331bfd63f33bd0daa5d5b8304aa50e0a1633e",
+    "renderer_commit": "9dd6046ac4a1b5d49ad76c09a6841d84126a6e9d",
     "node": "v24.13.1"
   },
   "records": [
@@ -52,113 +52,113 @@
       "name": "css-smil-540p",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 6.65709825,
-      "processing_seconds": 6.602271583
+      "wall_seconds": 8.847389041,
+      "processing_seconds": 8.756805583
     },
     {
       "name": "css-smil-1080p",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 16.760035792,
-      "processing_seconds": 16.7032395
+      "wall_seconds": 14.686624,
+      "processing_seconds": 14.591816708
     },
     {
       "name": "matched-native",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 0.12891225,
-      "processing_seconds": 0.093727125
+      "wall_seconds": 0.131630083,
+      "processing_seconds": 0.098979458
     },
     {
       "name": "matched-browser",
       "warmup": true,
       "round": -1,
-      "wall_seconds": 2.333597375,
-      "processing_seconds": 2.287415458
+      "wall_seconds": 6.71991625,
+      "processing_seconds": 6.628851417
     },
     {
       "name": "matched-browser",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 2.31427525,
-      "processing_seconds": 2.266902458
+      "wall_seconds": 6.686621541,
+      "processing_seconds": 6.598397834
     },
     {
       "name": "matched-native",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 0.121939041,
-      "processing_seconds": 0.0913675
+      "wall_seconds": 0.129196208,
+      "processing_seconds": 0.097424375
     },
     {
       "name": "css-smil-1080p",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 17.409307083,
-      "processing_seconds": 17.355454375
+      "wall_seconds": 14.571700709,
+      "processing_seconds": 14.480568958
     },
     {
       "name": "css-smil-540p",
       "warmup": false,
       "round": 0,
-      "wall_seconds": 6.527124542,
-      "processing_seconds": 6.471118625
+      "wall_seconds": 8.754129375,
+      "processing_seconds": 8.662799917
     },
     {
       "name": "css-smil-540p",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 6.360151375,
-      "processing_seconds": 6.310688625
+      "wall_seconds": 8.853148875,
+      "processing_seconds": 8.770826709
     },
     {
       "name": "css-smil-1080p",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 18.382961167,
-      "processing_seconds": 18.323606416
+      "wall_seconds": 14.64305825,
+      "processing_seconds": 14.528342167
     },
     {
       "name": "matched-native",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 0.145560625,
-      "processing_seconds": 0.107491625
+      "wall_seconds": 0.139365833,
+      "processing_seconds": 0.104204292
     },
     {
       "name": "matched-browser",
       "warmup": false,
       "round": 1,
-      "wall_seconds": 2.358270084,
-      "processing_seconds": 2.308401584
+      "wall_seconds": 6.713112416,
+      "processing_seconds": 6.6309809170000005
     },
     {
       "name": "matched-browser",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 2.354079625,
-      "processing_seconds": 2.303843583
+      "wall_seconds": 6.681350041,
+      "processing_seconds": 6.5915902079999995
     },
     {
       "name": "matched-native",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 0.120606125,
-      "processing_seconds": 0.090538875
+      "wall_seconds": 0.133515208,
+      "processing_seconds": 0.100431584
     },
     {
       "name": "css-smil-1080p",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 18.123041375,
-      "processing_seconds": 18.067946709
+      "wall_seconds": 14.577277917,
+      "processing_seconds": 14.483420041
     },
     {
       "name": "css-smil-540p",
       "warmup": false,
       "round": 2,
-      "wall_seconds": 6.365380417,
-      "processing_seconds": 6.312704458
+      "wall_seconds": 8.7403095,
+      "processing_seconds": 8.639618
     }
   ],
   "summary": [
@@ -166,48 +166,48 @@
       "name": "css-smil-540p",
       "width": 960,
       "height": 540,
-      "median_seconds": 6.365380417,
-      "whole_command_fps": 18.851976180326382,
+      "median_seconds": 8.754129375,
+      "whole_command_fps": 13.707816603978394,
       "samples": [
-        6.527124542,
-        6.360151375,
-        6.365380417
+        8.754129375,
+        8.853148875,
+        8.7403095
       ]
     },
     {
       "name": "css-smil-1080p",
       "width": 1920,
       "height": 1080,
-      "median_seconds": 18.123041375,
-      "whole_command_fps": 6.621405177915398,
+      "median_seconds": 14.577277917,
+      "whole_command_fps": 8.231989585658937,
       "samples": [
-        17.409307083,
-        18.382961167,
-        18.123041375
+        14.571700709,
+        14.64305825,
+        14.577277917
       ]
     },
     {
       "name": "matched-native",
       "width": 960,
       "height": 540,
-      "median_seconds": 0.121939041,
-      "whole_command_fps": 984.0982757933942,
+      "median_seconds": 0.133515208,
+      "whole_command_fps": 898.7740183125806,
       "samples": [
-        0.121939041,
-        0.145560625,
-        0.120606125
+        0.129196208,
+        0.139365833,
+        0.133515208
       ]
     },
     {
       "name": "matched-browser",
       "width": 960,
       "height": 540,
-      "median_seconds": 2.354079625,
-      "whole_command_fps": 50.9753360615404,
+      "median_seconds": 6.686621541,
+      "whole_command_fps": 17.94628262781173,
       "samples": [
-        2.31427525,
-        2.358270084,
-        2.354079625
+        6.686621541,
+        6.713112416,
+        6.681350041
       ]
     }
   ],

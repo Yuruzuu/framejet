@@ -1,13 +1,13 @@
 # CSS/SMIL export speed
 
-Measured on an Apple M4 Pro (14 logical CPUs, 24 GiB RAM), with the renderer code at `a62331b` (`0.2.0-dev`), after fixing CSS timeline freezing for very short animations. All exports use x264 fast at CRF 18, 30 fps, and four seconds of video: 120 frames. Times include the entire CLI process, Chromium/Node startup, frame capture, encoding, and shutdown.
+Measured on an Apple M4 Pro (14 logical CPUs, 24 GiB RAM), with the renderer code at `9dd6046` (`0.2.0-dev`), using full headless Chromium with CSS timeline freezing and explicit resource/paint synchronization. All exports use x264 fast at CRF 18, 30 fps, and four seconds of video: 120 frames. Times include the entire CLI process, Chromium/Node startup, frame capture, encoding, and shutdown.
 
 Each case had one warmup and three measured runs. Case order alternated each round; jobs ran sequentially. These are warmed measurements on one normally used Mac, not cold-install timings or a guarantee for other scenes.
 
 | CSS/SMIL example | Median export time | Whole-command throughput |
 | --- | ---: | ---: |
-| 960×540 | 6.365 s | 18.85 frames/s |
-| 1920×1080 | 18.123 s | 6.62 frames/s |
+| 960×540 | 8.754 s | 13.71 frames/s |
+| 1920×1080 | 14.577 s | 8.23 frames/s |
 
 This is the actual [CSS/SMIL example](../examples/css-smil.svg), including gradients, text, fading, SMIL rotation, and a progress bar. Browser SVG currently uses PNG screenshots. It provides declarative animation compatibility, and is significantly slower than native frame-by-frame SVG generation. Higher resolution raises capture, PNG compression, transfer, and decode work.
 
@@ -17,8 +17,8 @@ The simpler [animated SVG fixture](../tests/fixtures/animated.svg) was also comp
 
 | Engine | Median export time | Whole-command throughput |
 | --- | ---: | ---: |
-| Native SVG, generated states | 0.122 s | 984.10 frames/s |
-| Browser SVG, CSS/SMIL | 2.354 s | 50.98 frames/s |
+| Native SVG, generated states | 0.134 s | 898.77 frames/s |
+| Browser SVG, CSS/SMIL | 6.687 s | 17.95 frames/s |
 
 All 120 decoded output frames matched exactly between these two control videos. This is a small flat-shape fixture, not a prediction of native speed for a complex scene. Native SVG does not directly execute CSS/SMIL; it needs explicitly sampled markup. Existing native SVG and Three.js outputs remain on their existing paths.
 
