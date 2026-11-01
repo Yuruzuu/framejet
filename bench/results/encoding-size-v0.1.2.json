@@ -1,0 +1,953 @@
+{
+  "version": "framejet 0.1.2",
+  "binary_sha256": "a024b420d6d0725b66316aaf78d67089ba5272de01d02e8df00f522a52d6803b",
+  "source_commit": "2840a159597ed3bede81487162da28eebc9bd1a7",
+  "machine": "Apple M4 Pro, 14 logical CPUs, 24 GiB RAM",
+  "ffmpeg": "ffmpeg version 9.0.2-https://www.martin-riedl.de Copyright (c) 2000-2026 the FFmpeg developers",
+  "fps": 30,
+  "frames": 90,
+  "duration_seconds": 3,
+  "summary": [
+    {
+      "workload": "svg-titles",
+      "width": 1280,
+      "height": 720,
+      "baseline": {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-12mbps",
+        "bytes": 430830,
+        "wall_seconds": 0.503897834,
+        "ssim": 0.999465,
+        "worst_frame_ssim": 0.998543
+      },
+      "compact": {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf20",
+        "bytes": 76759,
+        "wall_seconds": 0.1775905,
+        "ssim": 0.998986,
+        "worst_frame_ssim": 0.998852
+      },
+      "reduction_percent": 82.18345983334494
+    },
+    {
+      "workload": "svg-particles",
+      "width": 1280,
+      "height": 720,
+      "baseline": {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-12mbps",
+        "bytes": 4553426,
+        "wall_seconds": 0.513901083,
+        "ssim": 0.99928,
+        "worst_frame_ssim": 0.997655
+      },
+      "compact": {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf20",
+        "bytes": 779072,
+        "wall_seconds": 0.276910083,
+        "ssim": 0.995727,
+        "worst_frame_ssim": 0.993619
+      },
+      "reduction_percent": 82.89042141016456
+    },
+    {
+      "workload": "three-orbit",
+      "width": 1280,
+      "height": 720,
+      "baseline": {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-12mbps",
+        "bytes": 1294450,
+        "wall_seconds": 0.727835375,
+        "ssim": 0.999458,
+        "worst_frame_ssim": 0.998523
+      },
+      "compact": {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf20",
+        "bytes": 307285,
+        "wall_seconds": 0.614114625,
+        "ssim": 0.998285,
+        "worst_frame_ssim": 0.99764
+      },
+      "reduction_percent": 76.2613465178261
+    },
+    {
+      "workload": "three-heavy-1080p",
+      "width": 1920,
+      "height": 1080,
+      "baseline": {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "hardware-12mbps",
+        "bytes": 4669435,
+        "wall_seconds": 0.974848625,
+        "ssim": 0.986575,
+        "worst_frame_ssim": 0.980746
+      },
+      "compact": {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "fast-crf22",
+        "bytes": 4062967,
+        "wall_seconds": 1.276839208,
+        "ssim": 0.986882,
+        "worst_frame_ssim": 0.982616
+      },
+      "reduction_percent": 12.988038167358573
+    }
+  ],
+  "direct": {
+    "mode": "direct",
+    "fps": 30,
+    "frames": 90,
+    "reference": "Lossless x264 CRF 0 after the existing RGB-to-YUV420 conversion. Direct timings cover the whole render; encoding-only timings include reference decoding.",
+    "records": [
+      {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-12mbps",
+        "bytes": 430830,
+        "wall_seconds": 0.503897834,
+        "ssim": 0.999465,
+        "worst_frame_ssim": 0.998543,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-6mbps",
+        "bytes": 320013,
+        "wall_seconds": 0.504068875,
+        "ssim": 0.999139,
+        "worst_frame_ssim": 0.997957,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf18",
+        "bytes": 88454,
+        "wall_seconds": 0.180375667,
+        "ssim": 0.999239,
+        "worst_frame_ssim": 0.999148,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf20",
+        "bytes": 76759,
+        "wall_seconds": 0.1775905,
+        "ssim": 0.998986,
+        "worst_frame_ssim": 0.998852,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-titles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf22",
+        "bytes": 66265,
+        "wall_seconds": 0.186972209,
+        "ssim": 0.998665,
+        "worst_frame_ssim": 0.998488,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-12mbps",
+        "bytes": 4553426,
+        "wall_seconds": 0.513901083,
+        "ssim": 0.99928,
+        "worst_frame_ssim": 0.997655,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-6mbps",
+        "bytes": 2300680,
+        "wall_seconds": 0.496432834,
+        "ssim": 0.997513,
+        "worst_frame_ssim": 0.996106,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf18",
+        "bytes": 1029657,
+        "wall_seconds": 0.346991334,
+        "ssim": 0.996735,
+        "worst_frame_ssim": 0.995199,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf20",
+        "bytes": 779072,
+        "wall_seconds": 0.276910083,
+        "ssim": 0.995727,
+        "worst_frame_ssim": 0.993619,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "svg-particles",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf22",
+        "bytes": 593519,
+        "wall_seconds": 0.280514875,
+        "ssim": 0.994491,
+        "worst_frame_ssim": 0.991917,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-12mbps",
+        "bytes": 1294450,
+        "wall_seconds": 0.727835375,
+        "ssim": 0.999458,
+        "worst_frame_ssim": 0.998523,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "hardware-6mbps",
+        "bytes": 863436,
+        "wall_seconds": 0.716572125,
+        "ssim": 0.999182,
+        "worst_frame_ssim": 0.997862,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf18",
+        "bytes": 373002,
+        "wall_seconds": 0.597533916,
+        "ssim": 0.998607,
+        "worst_frame_ssim": 0.998068,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf20",
+        "bytes": 307285,
+        "wall_seconds": 0.614114625,
+        "ssim": 0.998285,
+        "worst_frame_ssim": 0.99764,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-orbit",
+        "width": 1280,
+        "height": 720,
+        "setting": "fast-crf22",
+        "bytes": 251768,
+        "wall_seconds": 0.592697375,
+        "ssim": 0.997863,
+        "worst_frame_ssim": 0.997089,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "hardware-12mbps",
+        "bytes": 4669435,
+        "wall_seconds": 0.974848625,
+        "ssim": 0.986575,
+        "worst_frame_ssim": 0.980746,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "hardware-6mbps",
+        "bytes": 2348339,
+        "wall_seconds": 0.992343708,
+        "ssim": 0.970048,
+        "worst_frame_ssim": 0.957627,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "fast-crf18",
+        "bytes": 6197658,
+        "wall_seconds": 1.231531708,
+        "ssim": 0.992315,
+        "worst_frame_ssim": 0.989803,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "fast-crf20",
+        "bytes": 5005775,
+        "wall_seconds": 1.212272083,
+        "ssim": 0.989907,
+        "worst_frame_ssim": 0.986551,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      },
+      {
+        "workload": "three-heavy-1080p",
+        "width": 1920,
+        "height": 1080,
+        "setting": "fast-crf22",
+        "bytes": 4062967,
+        "wall_seconds": 1.276839208,
+        "ssim": 0.986882,
+        "worst_frame_ssim": 0.982616,
+        "probe": {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "3.000000",
+          "nb_read_frames": "90"
+        }
+      }
+    ]
+  },
+  "encoding_only_screens": [
+    {
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "frames": 90,
+      "reference": "Lossless x264 CRF 0 after the existing RGB-to-YUV420 conversion; encoding-only timings include reference decoding.",
+      "records": [
+        {
+          "workload": "svg-titles",
+          "setting": "hardware-12mbps",
+          "bytes": 430830,
+          "encode_seconds": 0.362310625,
+          "ssim": 0.999465,
+          "worst_frame_ssim": 0.998543
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "hardware-6mbps",
+          "bytes": 320013,
+          "encode_seconds": 0.336595625,
+          "ssim": 0.999139,
+          "worst_frame_ssim": 0.997957
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "fast-crf18",
+          "bytes": 88454,
+          "encode_seconds": 0.105376416,
+          "ssim": 0.999239,
+          "worst_frame_ssim": 0.999148
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "fast-crf20",
+          "bytes": 76759,
+          "encode_seconds": 0.102574916,
+          "ssim": 0.998986,
+          "worst_frame_ssim": 0.998852
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "fast-crf22",
+          "bytes": 66265,
+          "encode_seconds": 0.102830209,
+          "ssim": 0.998665,
+          "worst_frame_ssim": 0.998488
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "medium-crf18",
+          "bytes": 86373,
+          "encode_seconds": 0.116508583,
+          "ssim": 0.99931,
+          "worst_frame_ssim": 0.999227
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "medium-crf20",
+          "bytes": 75013,
+          "encode_seconds": 0.117804,
+          "ssim": 0.999045,
+          "worst_frame_ssim": 0.998925
+        },
+        {
+          "workload": "svg-titles",
+          "setting": "slow-crf20",
+          "bytes": 75932,
+          "encode_seconds": 0.144600583,
+          "ssim": 0.999089,
+          "worst_frame_ssim": 0.999014
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "hardware-12mbps",
+          "bytes": 4553426,
+          "encode_seconds": 0.341026834,
+          "ssim": 0.99928,
+          "worst_frame_ssim": 0.997655
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "hardware-6mbps",
+          "bytes": 2300680,
+          "encode_seconds": 0.342738875,
+          "ssim": 0.997513,
+          "worst_frame_ssim": 0.996106
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "fast-crf18",
+          "bytes": 1029657,
+          "encode_seconds": 0.217369958,
+          "ssim": 0.996735,
+          "worst_frame_ssim": 0.995199
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "fast-crf20",
+          "bytes": 779072,
+          "encode_seconds": 0.209909084,
+          "ssim": 0.995727,
+          "worst_frame_ssim": 0.993619
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "fast-crf22",
+          "bytes": 593519,
+          "encode_seconds": 0.210863166,
+          "ssim": 0.994491,
+          "worst_frame_ssim": 0.991917
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "medium-crf18",
+          "bytes": 1007553,
+          "encode_seconds": 0.242716917,
+          "ssim": 0.996835,
+          "worst_frame_ssim": 0.995367
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "medium-crf20",
+          "bytes": 768205,
+          "encode_seconds": 0.236658708,
+          "ssim": 0.995876,
+          "worst_frame_ssim": 0.994013
+        },
+        {
+          "workload": "svg-particles",
+          "setting": "slow-crf20",
+          "bytes": 749170,
+          "encode_seconds": 0.346508458,
+          "ssim": 0.995884,
+          "worst_frame_ssim": 0.994095
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "hardware-12mbps",
+          "bytes": 4649519,
+          "encode_seconds": 0.365084583,
+          "ssim": 0.991478,
+          "worst_frame_ssim": 0.987112
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "hardware-6mbps",
+          "bytes": 2331607,
+          "encode_seconds": 0.357122541,
+          "ssim": 0.978746,
+          "worst_frame_ssim": 0.969519
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "fast-crf18",
+          "bytes": 3765456,
+          "encode_seconds": 0.408477375,
+          "ssim": 0.990749,
+          "worst_frame_ssim": 0.98755
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "fast-crf20",
+          "bytes": 3024489,
+          "encode_seconds": 0.40072425,
+          "ssim": 0.98758,
+          "worst_frame_ssim": 0.983158
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "fast-crf22",
+          "bytes": 2437302,
+          "encode_seconds": 0.388600042,
+          "ssim": 0.983592,
+          "worst_frame_ssim": 0.978215
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "medium-crf18",
+          "bytes": 3715623,
+          "encode_seconds": 0.469041042,
+          "ssim": 0.990775,
+          "worst_frame_ssim": 0.98757
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "medium-crf20",
+          "bytes": 2975076,
+          "encode_seconds": 0.456205834,
+          "ssim": 0.987618,
+          "worst_frame_ssim": 0.983192
+        },
+        {
+          "workload": "three-heavy",
+          "setting": "slow-crf20",
+          "bytes": 2947002,
+          "encode_seconds": 0.734295875,
+          "ssim": 0.987666,
+          "worst_frame_ssim": 0.983333
+        }
+      ]
+    },
+    {
+      "fps": 30,
+      "frames": 90,
+      "reference": "Lossless x264 CRF 0 after the existing RGB-to-YUV420 conversion; encoding-only timings include reference decoding.",
+      "records": [
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "hardware-12mbps",
+          "bytes": 4669435,
+          "encode_seconds": 0.591665333,
+          "ssim": 0.986575,
+          "worst_frame_ssim": 0.980746
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "hardware-6mbps",
+          "bytes": 2348339,
+          "encode_seconds": 0.580540292,
+          "ssim": 0.970048,
+          "worst_frame_ssim": 0.957627
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "fast-crf18",
+          "bytes": 6197658,
+          "encode_seconds": 0.767601083,
+          "ssim": 0.992315,
+          "worst_frame_ssim": 0.989803
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "fast-crf20",
+          "bytes": 5005775,
+          "encode_seconds": 0.743942167,
+          "ssim": 0.989907,
+          "worst_frame_ssim": 0.986551
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "fast-crf22",
+          "bytes": 4062967,
+          "encode_seconds": 0.752742625,
+          "ssim": 0.986882,
+          "worst_frame_ssim": 0.982616
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "medium-crf18",
+          "bytes": 6058034,
+          "encode_seconds": 0.9522515,
+          "ssim": 0.992334,
+          "worst_frame_ssim": 0.989784
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "medium-crf20",
+          "bytes": 4885565,
+          "encode_seconds": 0.945322333,
+          "ssim": 0.989938,
+          "worst_frame_ssim": 0.986503
+        },
+        {
+          "workload": "three-heavy-1080p",
+          "width": 1920,
+          "height": 1080,
+          "setting": "slow-crf20",
+          "bytes": 4814558,
+          "encode_seconds": 1.375473792,
+          "ssim": 0.989968,
+          "worst_frame_ssim": 0.986662
+        }
+      ]
+    },
+    {
+      "fps": 30,
+      "frames": 90,
+      "reference": "Lossless x264 CRF 0 after the existing RGB-to-YUV420 conversion; encoding-only timings include reference decoding.",
+      "records": [
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "hardware-12mbps",
+          "bytes": 1294450,
+          "encode_seconds": 0.35748025,
+          "ssim": 0.999458,
+          "worst_frame_ssim": 0.998523
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "hardware-6mbps",
+          "bytes": 863436,
+          "encode_seconds": 0.353860333,
+          "ssim": 0.999182,
+          "worst_frame_ssim": 0.997862
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "fast-crf18",
+          "bytes": 373002,
+          "encode_seconds": 0.176169667,
+          "ssim": 0.998607,
+          "worst_frame_ssim": 0.998068
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "fast-crf20",
+          "bytes": 307285,
+          "encode_seconds": 0.173667042,
+          "ssim": 0.998285,
+          "worst_frame_ssim": 0.99764
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "fast-crf22",
+          "bytes": 251768,
+          "encode_seconds": 0.169249458,
+          "ssim": 0.997863,
+          "worst_frame_ssim": 0.997089
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "medium-crf18",
+          "bytes": 361361,
+          "encode_seconds": 0.196811083,
+          "ssim": 0.998619,
+          "worst_frame_ssim": 0.99814
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "medium-crf20",
+          "bytes": 293009,
+          "encode_seconds": 0.187037208,
+          "ssim": 0.998284,
+          "worst_frame_ssim": 0.997655
+        },
+        {
+          "workload": "three-orbit",
+          "width": 1280,
+          "height": 720,
+          "setting": "slow-crf20",
+          "bytes": 285847,
+          "encode_seconds": 0.227406625,
+          "ssim": 0.998302,
+          "worst_frame_ssim": 0.997687
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "examples/hello.svg.mjs": "d0952420e3a39c4ad30c290b3e78d1d48cc742e8a3188817f2075721811be505",
+    "bench/particles.svg.mjs": "08bce2f3f2d6aca98ead7c76bcd6c10d47ac03dfddfbc648e8bbf48171202989",
+    "examples/orbit.three.mjs": "8b7800a0d2d401feb4700139f2d547fc32ea388e84941a1542063f4c67be6a31",
+    "bench/heavy.three.mjs": "556879cd958a130b07a3d6819ff7878ae3f00d79fd52aaae2c561f13e9d884d0"
+  },
+  "retained_previous_version_sizes": [
+    {
+      "encoder": "videotoolbox",
+      "workload": "static-svg",
+      "baseline_bytes": 26793,
+      "candidate_bytes": 26793,
+      "byte_identical": false
+    },
+    {
+      "encoder": "videotoolbox",
+      "workload": "svg-particles",
+      "baseline_bytes": 6006081,
+      "candidate_bytes": 6006081,
+      "byte_identical": false
+    },
+    {
+      "encoder": "videotoolbox",
+      "workload": "svg-titles",
+      "baseline_bytes": 868916,
+      "candidate_bytes": 868916,
+      "byte_identical": false
+    },
+    {
+      "encoder": "videotoolbox",
+      "workload": "svg-titles-4k",
+      "baseline_bytes": 779119,
+      "candidate_bytes": 779119,
+      "byte_identical": false
+    },
+    {
+      "encoder": "videotoolbox",
+      "workload": "three-heavy",
+      "baseline_bytes": 6098321,
+      "candidate_bytes": 6098321,
+      "byte_identical": false
+    },
+    {
+      "encoder": "videotoolbox",
+      "workload": "three-orbit",
+      "baseline_bytes": 3182051,
+      "candidate_bytes": 3182051,
+      "byte_identical": false
+    },
+    {
+      "encoder": "software",
+      "workload": "static-svg",
+      "baseline_bytes": 16754,
+      "candidate_bytes": 16754,
+      "byte_identical": true
+    },
+    {
+      "encoder": "software",
+      "workload": "svg-particles",
+      "baseline_bytes": 1379628,
+      "candidate_bytes": 1379628,
+      "byte_identical": true
+    },
+    {
+      "encoder": "software",
+      "workload": "svg-titles",
+      "baseline_bytes": 143699,
+      "candidate_bytes": 143699,
+      "byte_identical": true
+    },
+    {
+      "encoder": "software",
+      "workload": "svg-titles-4k",
+      "baseline_bytes": 269828,
+      "candidate_bytes": 269828,
+      "byte_identical": true
+    },
+    {
+      "encoder": "software",
+      "workload": "three-heavy",
+      "baseline_bytes": 8487931,
+      "candidate_bytes": 8487931,
+      "byte_identical": true
+    },
+    {
+      "encoder": "software",
+      "workload": "three-orbit",
+      "baseline_bytes": 575994,
+      "candidate_bytes": 575994,
+      "byte_identical": true
+    }
+  ]
+}

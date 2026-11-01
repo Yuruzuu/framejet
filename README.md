@@ -58,6 +58,16 @@ Other options:
 
 Files are finalized only after successful rendering/encoding. JSON reports include input/output paths, dimensions, frame count, actual output duration, encoder, startup time, processing time, throughput, and the reported GPU for Three.js. Frame and contact-sheet reports also include sample times. Processing time includes frame generation, transfer, encoding, and encoder finalization; it is not isolated GPU time. Contact-sheet tiles run left to right, top to bottom, from the first to the last video frame.
 
+### Smaller video files
+
+For clean motion graphics, use quality-based software encoding:
+
+```sh
+framejet render animation.svg.mjs -o video.mp4 --encoder software --crf 18
+```
+
+When file size matters more, try `--crf 20`, then review before increasing to `22`. Higher CRF trades detail for fewer bytes. Keep the authored resolution and frame rate. Dense or noisy 3D can still be larger with software encoding; compare against the hardware output rather than assuming one setting always wins. See the [measured file sizes and quality checks](bench/encoding-size.md).
+
 ## SVG animation API
 
 Create `animation.svg.mjs`:

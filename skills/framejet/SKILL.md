@@ -5,7 +5,7 @@ description: Render SVG or Three.js animations as MP4 videos with Framejet, and 
 
 # Framejet
 
-Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. If missing, install with `cargo install --git https://github.com/Yuruzuu/framejet --tag v0.1.1 --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the pinned Three.js runtime and Chromium. SVG-only use does not need Chromium.
+Use `framejet` for SVG and Three.js video exports. Run `framejet doctor` to check dependencies. If missing, install with `cargo install --git https://github.com/Yuruzuu/framejet --tag v0.1.2 --locked`. Node.js 20+, npm, and FFmpeg must be on PATH; `framejet setup` installs the pinned Three.js runtime and Chromium. SVG-only use does not need Chromium.
 
 Create a small `.mjs` adapter next to existing animation assets, preserving the requested design and original source. Animation comes from explicit `time` in seconds, not timers or real-time playback. Frame/contact-sheet requests can sample times out of order. Await asset loads before rendering.
 
@@ -20,13 +20,15 @@ export function render({ time, frame, width, height, fps, duration }) {
 }
 ```
 
-**Three.js:** name it `animation.three.mjs`. Export the same `video` metadata and `setup({ THREE, renderer, width, height })`, returning `{ scene, camera, update({ time, frame }) }`. Build geometry once in `setup`; pose it in `update`. `setup` may be async. Browser imports support `three`, `three/addons/...`, and relative modules/assets inside the adapter's directory. Other packages need bundling. For postprocessing, return `render({ renderer, time, frame })` that draws to the canvas. See the [complete example](https://github.com/Yuruzuu/framejet/blob/v0.1.1/examples/orbit.three.mjs).
+**Three.js:** name it `animation.three.mjs`. Export the same `video` metadata and `setup({ THREE, renderer, width, height })`, returning `{ scene, camera, update({ time, frame }) }`. Build geometry once in `setup`; pose it in `update`. `setup` may be async. Browser imports support `three`, `three/addons/...`, and relative modules/assets inside the adapter's directory. Other packages need bundling. For postprocessing, return `render({ renderer, time, frame })` that draws to the canvas. See the [complete example](https://github.com/Yuruzuu/framejet/blob/v0.1.2/examples/orbit.three.mjs).
 
 ```sh
 framejet frame animation.svg.mjs --time 1 -o frame.png
 framejet contact-sheet animation.three.mjs --count 8 -o sheet.png
-framejet render animation.three.mjs -o video.mp4 --report render.json
+framejet render animation.three.mjs -o video.mp4 --encoder software --crf 18 --report render.json
 ```
+
+For clean motion graphics, prefer `--encoder software --crf 18` for small, high-quality H.264 files. When smaller files are requested, start at `--crf 20`; inspect text, gradients, and motion before trying `22`. Dense/noisy 3D can produce larger software files, so compare sizes with the hardware output. Preserve resolution and frame rate unless asked otherwise. Compression changes are lossy; do not claim decoded pixel parity across quality settings.
 
 Inspect useful frames/contact sheets before the final export. Both inputs support `--width`, `--height`, `--fps`, and `--duration`; MP4 needs even dimensions. Use `--font Brand.ttf` for SVG fonts. Existing files require explicit `--force`. Commands print JSON on stdout and diagnostics on stderr; report failures rather than treating a partial file as success. Deliver the actual output path.
 
