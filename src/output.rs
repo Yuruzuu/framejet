@@ -1,13 +1,15 @@
 use crate::{
     cli::{Encoder, OutputArgs},
-    source::Video,
+    source::{Frame, FramePool, Video},
 };
 use anyhow::{Context, Result, ensure};
 use std::{
     fs::{self, File},
-    io::{Read, Seek, Write},
+    io::{self, Read, Seek, Write},
     path::Path,
-    process::{Child, ChildStdin, Command, Stdio},
+    process::{Child, Command, Stdio},
+    sync::mpsc,
+    thread::JoinHandle,
 };
 use tempfile::{NamedTempFile, TempPath};
 
@@ -117,7 +119,8 @@ fn hardware_works() -> bool {
 
 pub struct VideoEncoder {
     child: Child,
-    input: Option<ChildStdin>,
+    frames: Option<mpsc::SyncSender<Frame>>,
+    writer: Option<JoinHandle<io::Result<()>>>,
     errors: File,
     temporary: Option<TempPath>,
     pub name: &'static str,
@@ -130,6 +133,8 @@ impl VideoEncoder {
         requested: Encoder,
         crf: u8,
         bitrate: u32,
+        queue: usize,
+        buffers: FramePool,
     ) -> Result<Self> {
         ensure!(
             video.width.is_multiple_of(2) && video.height.is_multiple_of(2),
@@ -195,27 +200,43 @@ impl VideoEncoder {
         let mut child = command
             .spawn()
             .context("FFmpeg is required; install ffmpeg and try again")?;
-        let input = child.stdin.take();
+        let mut input = child.stdin.take().context("Cannot open encoder input")?;
+        // A separate writer lets rendering continue while FFmpeg consumes frames.
+        let (frames, queued) = mpsc::sync_channel::<Frame>(queue);
+        let writer = std::thread::spawn(move || {
+            for frame in queued {
+                input.write_all(&frame)?;
+                buffers.recycle(frame);
+            }
+            Ok(())
+        });
         Ok(Self {
             child,
-            input,
+            frames: Some(frames),
+            writer: Some(writer),
             errors,
             temporary: Some(temporary),
             name,
         })
     }
 
-    pub fn write(&mut self, pixels: &[u8]) -> Result<()> {
-        if let Err(error) = self
-            .input
-            .as_mut()
-            .context("Encoder input is closed")?
-            .write_all(pixels)
-        {
+    pub fn write(&mut self, frame: Frame) -> Result<()> {
+        let sender = self.frames.as_ref().context("Encoder input is closed")?;
+        if sender.send(frame).is_err() {
+            self.frames.take();
+            let error = self.join_writer();
             let _ = self.child.wait();
             anyhow::bail!("FFmpeg rejected a frame: {error}. {}", self.error_text());
         }
         Ok(())
+    }
+
+    fn join_writer(&mut self) -> String {
+        match self.writer.take().map(JoinHandle::join) {
+            Some(Ok(Err(error))) => error.to_string(),
+            Some(Err(_)) => "encoder writer panicked".to_owned(),
+            _ => String::new(),
+        }
     }
 
     fn error_text(&mut self) -> String {
@@ -226,11 +247,12 @@ impl VideoEncoder {
     }
 
     pub fn finish(mut self, output: &OutputArgs) -> Result<()> {
-        self.input.take();
+        self.frames.take();
+        let writer_error = self.join_writer();
         let status = self.child.wait()?;
         ensure!(
-            status.success(),
-            "FFmpeg encoding failed: {}",
+            status.success() && writer_error.is_empty(),
+            "FFmpeg encoding failed: {writer_error} {}",
             self.error_text()
         );
         let temporary = self
@@ -252,8 +274,10 @@ impl VideoEncoder {
 
 impl Drop for VideoEncoder {
     fn drop(&mut self) {
-        self.input.take();
+        self.frames.take();
+        // Killing FFmpeg also releases a writer blocked on a full pipe.
         let _ = self.child.kill();
         let _ = self.child.wait();
+        self.join_writer();
     }
 }

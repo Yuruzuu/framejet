@@ -56,10 +56,12 @@ impl SvgRenderer {
         ))
     }
 
-    pub fn render(&self, svg: &str, width: u32, height: u32) -> Result<Vec<u8>> {
+    /// Draws into `buffer`, which must already hold one full frame.
+    pub fn render(&self, svg: &str, width: u32, height: u32, buffer: Vec<u8>) -> Result<Vec<u8>> {
         let tree = self.parse(svg)?;
+        let size = tiny_skia::IntSize::from_wh(width, height).context("Invalid SVG surface")?;
         let mut pixels =
-            tiny_skia::Pixmap::new(width, height).context("Cannot allocate SVG surface")?;
+            tiny_skia::Pixmap::from_vec(buffer, size).context("Cannot allocate SVG surface")?;
         // Both backends use an opaque black canvas; SVG may paint its own background.
         pixels.fill(tiny_skia::Color::BLACK);
         let scale = (width as f32 / tree.size().width()).min(height as f32 / tree.size().height());

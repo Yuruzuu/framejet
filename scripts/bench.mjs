@@ -13,7 +13,7 @@ const { values, positionals } = parseArgs({ allowPositionals: true, options: {
   output: { type: 'string', default: 'artifacts/benchmark' },
   workload: { type: 'string', multiple: true },
 } });
-if (positionals.length !== 2) throw new Error('Usage: node scripts/bench.mjs BASELINE CANDIDATE [--rounds 5] [--encoder software|videotoolbox] [--output DIRECTORY]');
+if (positionals.length !== 2) throw new Error('Usage: node scripts/bench.mjs BASELINE CANDIDATE [--rounds 5] [--encoder auto|software|videotoolbox] [--output DIRECTORY]');
 const executables = positionals.map(executable => path.resolve(executable));
 const directory = path.resolve(values.output);
 const rounds = Number(values.rounds);
@@ -24,6 +24,7 @@ const workloads = [
   { name: 'svg-titles', input: 'examples/hello.svg.mjs', width: 1920, height: 1080, duration: 6 },
   { name: 'svg-particles', input: 'bench/particles.svg.mjs', width: 1280, height: 720, duration: 4 },
   { name: 'three-orbit', input: 'examples/orbit.three.mjs', width: 1280, height: 720, duration: 6 },
+  { name: 'static-svg', input: 'tests/fixtures/bands.svg', width: 1920, height: 1080, duration: 6 },
 ].filter(workload => !values.workload || values.workload.includes(workload.name));
 if (!workloads.length) throw new Error('No matching workloads');
 const hash = file => createHash('sha256').update(readFileSync(file)).digest('hex');
@@ -47,7 +48,7 @@ function render(workload, variant, warmup, round) {
   const wallSeconds = Number(process.hrtime.bigint() - started) / 1e9;
   if (result.status !== 0) throw new Error(`${workload.name} variant ${variant}: ${result.error || result.stderr}`);
   const report = JSON.parse(result.stdout);
-  if (report.frames !== Math.ceil(workload.duration * 30) || report.encoder !== (values.encoder === 'software' ? 'libx264' : 'h264_videotoolbox')
+  if (report.frames !== Math.ceil(workload.duration * 30) || (values.encoder !== 'auto' && report.encoder !== (values.encoder === 'software' ? 'libx264' : 'h264_videotoolbox'))
     || report.video.width !== workload.width || report.video.height !== workload.height || report.video.fps !== 30) {
     throw new Error(`Work/encoder mismatch: ${JSON.stringify(report)}`);
   }

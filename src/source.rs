@@ -8,8 +8,9 @@ use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
+    ops::Deref,
     sync::{
-        Arc,
+        Arc, Mutex,
         atomic::{AtomicBool, Ordering},
     },
 };
@@ -61,13 +62,52 @@ pub struct Sample {
     pub frame: u64,
 }
 
+/// Rendered RGBA pixels: owned by one frame, or shared by every static frame.
+pub enum Frame {
+    Owned(Vec<u8>),
+    Shared(Arc<Vec<u8>>),
+}
+
+impl Deref for Frame {
+    type Target = [u8];
+
+    fn deref(&self) -> &[u8] {
+        match self {
+            Self::Owned(pixels) => pixels,
+            Self::Shared(pixels) => pixels,
+        }
+    }
+}
+
+/// Recycles frame allocations, avoiding fresh zeroed pages for every frame.
+#[derive(Clone, Default)]
+pub struct FramePool(Arc<Mutex<Vec<Vec<u8>>>>);
+
+impl FramePool {
+    pub fn take(&self, length: usize) -> Vec<u8> {
+        self.0
+            .lock()
+            .ok()
+            .and_then(|mut buffers| buffers.pop())
+            .filter(|buffer| buffer.len() == length)
+            .unwrap_or_else(|| vec![0; length])
+    }
+
+    pub fn recycle(&self, frame: Frame) {
+        if let (Frame::Owned(buffer), Ok(mut buffers)) = (frame, self.0.lock()) {
+            buffers.push(buffer);
+        }
+    }
+}
+
 pub struct Source {
     pub video: Video,
     pub backend: &'static str,
     pub threads: usize,
     worker: Option<Worker>,
     svg: Option<SvgRenderer>,
-    static_pixels: Option<Vec<u8>>,
+    static_pixels: Option<Arc<Vec<u8>>>,
+    pub buffers: FramePool,
     pool: rayon::ThreadPool,
     cancelled: Arc<AtomicBool>,
 }
@@ -124,7 +164,12 @@ impl Source {
                 gpu: None,
             };
             video.validate()?;
-            static_pixels = Some(renderer.render(&markup, video.width, video.height)?);
+            static_pixels = Some(Arc::new(renderer.render(
+                &markup,
+                video.width,
+                video.height,
+                vec![0; video.frame_bytes()],
+            )?));
             video
         } else {
             let configuration = serde_json::json!({"input":input,"backend":backend,"softwareRendering":arguments.software_rendering,"overrides":{
@@ -144,6 +189,7 @@ impl Source {
             worker,
             svg,
             static_pixels,
+            buffers: FramePool::default(),
             pool,
             cancelled,
         })
@@ -153,35 +199,62 @@ impl Source {
         (64 * 1024 * 1024 / self.video.frame_bytes()).clamp(1, self.threads * 2)
     }
 
-    pub fn frames(&mut self, samples: &[Sample]) -> Result<Vec<Vec<u8>>> {
+    /// Asks the runtime for a batch, which it may generate ahead of `collect`.
+    pub fn request(&mut self, samples: &[Sample]) -> Result<()> {
+        ensure!(!self.cancelled.load(Ordering::Relaxed), "Cancelled");
+        if self.static_pixels.is_some() {
+            return Ok(());
+        }
+        self.worker
+            .as_mut()
+            .context("Animation runtime is missing")?
+            .send(&serde_json::json!({"command":"frames","samples":samples}))
+    }
+
+    /// Delivers a requested batch to `sink`, in order.
+    pub fn collect(
+        &mut self,
+        samples: &[Sample],
+        sink: &mut dyn FnMut(Frame) -> Result<()>,
+    ) -> Result<()> {
         ensure!(!self.cancelled.load(Ordering::Relaxed), "Cancelled");
         if let Some(pixels) = &self.static_pixels {
-            return Ok(samples.iter().map(|_| pixels.clone()).collect());
+            return samples
+                .iter()
+                .try_for_each(|_| sink(Frame::Shared(pixels.clone())));
         }
         let worker = self
             .worker
             .as_mut()
             .context("Animation runtime is missing")?;
-        worker.send(&serde_json::json!({"command":"frames","samples":samples}))?;
-        let bytes = samples
-            .iter()
-            .map(|_| worker.receive())
-            .collect::<Result<Vec<_>>>()?;
         if let Some(renderer) = &self.svg {
-            self.pool.install(|| {
-                bytes
+            let markups = samples
+                .iter()
+                .map(|_| worker.receive())
+                .collect::<Result<Vec<_>>>()?;
+            let buffers = &self.buffers;
+            let video = &self.video;
+            let frames: Vec<Vec<u8>> = self.pool.install(|| {
+                markups
                     .into_par_iter()
                     .zip(samples.par_iter())
                     .map(|(bytes, sample)| {
                         let markup = String::from_utf8(bytes).context("SVG is not valid UTF-8")?;
                         renderer
-                            .render(&markup, self.video.width, self.video.height)
+                            .render(
+                                &markup,
+                                video.width,
+                                video.height,
+                                buffers.take(video.frame_bytes()),
+                            )
                             .with_context(|| format!("Frame {} at {}s", sample.frame, sample.time))
                     })
-                    .collect()
-            })
+                    .collect::<Result<_>>()
+            })?;
+            frames.into_iter().try_for_each(|pixels| sink(Frame::Owned(pixels)))
         } else {
-            for (pixels, sample) in bytes.iter().zip(samples) {
+            for sample in samples {
+                let pixels = worker.receive()?;
                 ensure!(
                     pixels.len() == self.video.frame_bytes(),
                     "Frame {} has {} bytes; expected {}",
@@ -189,8 +262,9 @@ impl Source {
                     pixels.len(),
                     self.video.frame_bytes()
                 );
+                sink(Frame::Owned(pixels))?;
             }
-            Ok(bytes)
+            Ok(())
         }
     }
 }

@@ -1,3 +1,6 @@
+#[global_allocator]
+static ALLOCATOR: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 mod cli;
 mod output;
 mod runtime;
@@ -49,26 +52,38 @@ fn run() -> Result<()> {
             bitrate,
             ..
         } => {
-            let mut encoder =
-                output::VideoEncoder::start(&video, &output.output, encoder, crf, bitrate)?;
+            let batch_size = source.batch_size() as u64;
+            let mut encoder = output::VideoEncoder::start(
+                &video,
+                &output.output,
+                encoder,
+                crf,
+                bitrate,
+                batch_size as usize,
+                source.buffers.clone(),
+            )?;
             encoder_name = Some(encoder.name);
             let total = video.frames();
-            let batch_size = source.batch_size() as u64;
+            let batch_at = |start: u64| -> Vec<_> {
+                (start..(start + batch_size).min(total))
+                    .map(|frame| Sample {
+                        time: frame as f64 / video.fps,
+                        frame,
+                    })
+                    .collect()
+            };
+            source.request(&batch_at(0))?;
             eprintln!(
                 "Rendering {total} frames through {} → {}",
                 source.backend, encoder.name
             );
             for start in (0..total).step_by(batch_size as usize) {
                 ensure!(!cancelled.load(Ordering::Relaxed), "Cancelled");
-                let batch: Vec<_> = (start..(start + batch_size).min(total))
-                    .map(|frame| Sample {
-                        time: frame as f64 / video.fps,
-                        frame,
-                    })
-                    .collect();
-                for pixels in source.frames(&batch)? {
-                    encoder.write(&pixels)?;
+                // Generate the next batch while this one renders and encodes.
+                if start + batch_size < total {
+                    source.request(&batch_at(start + batch_size))?;
                 }
+                source.collect(&batch_at(start), &mut |frame| encoder.write(frame))?;
                 if start == 0
                     || (start / batch_size).is_multiple_of(10)
                     || start + batch_size >= total
@@ -93,14 +108,16 @@ fn run() -> Result<()> {
                 time,
                 frame: (time * video.fps).floor() as u64,
             };
-            let frames = source.frames(&[sample])?;
-            output::save_png(
-                &output.output,
-                output.force,
-                video.width,
-                video.height,
-                &frames[0],
-            )?;
+            source.request(&[sample])?;
+            source.collect(&[sample], &mut |pixels| {
+                output::save_png(
+                    &output.output,
+                    output.force,
+                    video.width,
+                    video.height,
+                    &pixels,
+                )
+            })?;
             samples = 1;
             sample_times = Some(vec![time]);
             (output_width, output_height) = (video.width, video.height);
@@ -147,14 +164,18 @@ fn run() -> Result<()> {
                     .map(|sample| sample.time)
                     .collect::<Vec<_>>(),
             );
-            for (batch_index, batch) in positions.chunks(source.batch_size()).enumerate() {
-                let frames = source.frames(batch)?;
-                for (offset, pixels) in frames.iter().enumerate() {
-                    let index = batch_index * source.batch_size() + offset;
+            let batch_size = source.batch_size();
+            for (batch_index, batch) in positions.chunks(batch_size).enumerate() {
+                let first = batch_index * batch_size;
+                let mut offset = 0;
+                source.request(batch)?;
+                source.collect(batch, &mut |pixels| {
+                    let index = first + offset;
+                    offset += 1;
                     let left = index as u32 % columns * thumbnail_width;
                     let top = index as u32 / columns * thumbnail_height;
                     let tile =
-                        resvg::tiny_skia::PixmapRef::from_bytes(pixels, video.width, video.height)
+                        resvg::tiny_skia::PixmapRef::from_bytes(&pixels, video.width, video.height)
                             .ok_or_else(|| anyhow::anyhow!("Invalid thumbnail pixels"))?;
                     let mut canvas = resvg::tiny_skia::PixmapMut::from_bytes(
                         &mut sheet,
@@ -172,7 +193,8 @@ fn run() -> Result<()> {
                     )
                     .post_translate(left as f32, top as f32);
                     canvas.draw_pixmap(0, 0, tile, &paint, transform, None);
-                }
+                    Ok(())
+                })?;
             }
             output::save_png(
                 &output.output,
