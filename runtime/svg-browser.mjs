@@ -184,6 +184,12 @@ export async function createSvgBrowser(configuration, video) {
           }
           for (const { animation, paused } of window.framejetSvg) {
             animation.currentTime = paused ? 0 : time * 1000;
+            // Flush the animated element itself: querying only the SVG root can
+            // leave paused CSS effects pending in Chromium's SVG paint tree.
+            const target = animation.effect.target;
+            getComputedStyle(target).getPropertyValue('opacity');
+            getComputedStyle(target).getPropertyValue('transform');
+            target.getBoundingClientRect();
           }
           document.documentElement.getBoundingClientRect();
         }, time);
